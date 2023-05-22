@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  php-apache:
+    container_name: php-apache
+    build:
+      context: ./containers/php-apache
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/http
+      - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - database
+  database:
+    image: postgres
+    container_name: database
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: kenshu_backend_php
+      POSTGRES_DB: kenshu_backend_php
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./containers/database:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
