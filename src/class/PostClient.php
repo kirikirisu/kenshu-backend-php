@@ -10,7 +10,9 @@
     }
 
     public function getPostList() {
-
+      $query = "SELECT * from posts";
+      $res = $this->pdo->query($query);
+      return $res->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getPostById() {
