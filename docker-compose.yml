@@ -10,6 +10,7 @@ services:
     volumes:
       - ./src:/var/www/html/src
       - ./apache/default.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./apache/apache2.conf:/etc/apache2/apache2.conf
     depends_on:
       - database
   database:

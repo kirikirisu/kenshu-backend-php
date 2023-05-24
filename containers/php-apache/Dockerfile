@@ -13,7 +13,8 @@ RUN apt update \
             opcache \
             pdo \
             pdo_pgsql \
-            pgsql 
+            pgsql \
+        && a2enmod rewrite
 
 WORKDIR /var/www/html
 
