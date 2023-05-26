@@ -1,5 +1,6 @@
 <?php
   require_once(dirname(__DIR__, 1)."/class/PostPayload.php");
+  require_once(dirname(__DIR__, 1)."/model/Post.php");
 
   class PostClient {
     public PDO $pdo;
@@ -9,10 +10,20 @@
       $this->pdo = $pdo;
     }
 
+    /**
+     * @return Post[]
+    */
     public function getPostList() {
       $query = "SELECT * from posts";
       $res = $this->pdo->query($query);
-      return $res->fetchAll(PDO::FETCH_ASSOC);
+      $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
+      $post_list = [];
+
+      foreach($raw_post_list as $post) {
+        $post_list[] = new Post(id: $post["id"], user_id: $post["user_id"], title: $post["title"],  body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
+      }
+
+      return $post_list;
     }
 
     public function getPostById() {

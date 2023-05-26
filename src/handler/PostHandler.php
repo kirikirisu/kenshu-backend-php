@@ -1,6 +1,6 @@
 <?php
   require_once(dirname(__DIR__, 1)."/class/PgConnect.php");
-  require_once(dirname(__DIR__, 1)."/class/PostClient.php");
+  require_once(dirname(__DIR__, 1)."/client/PostClient.php");
   require_once(dirname(__DIR__, 1)."/class/PostPayload.php");
   require_once(dirname(__DIR__, 1)."/class/PageComposer.php");
 
