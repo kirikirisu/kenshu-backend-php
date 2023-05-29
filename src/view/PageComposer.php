@@ -1,6 +1,6 @@
 <?php
   require_once(dirname(__DIR__, 1)."/model/Post.php");
-  require_once(dirname(__DIR__, 1)."/class/InputError.php");
+  require_once(dirname(__DIR__, 1)."/lib/InputError.php");
 
   class PageComposer
   {
@@ -11,8 +11,8 @@
     * @param InputError[] $error_list
     */
     public function topPage($data_chunk, $error_list = null) {
-      $top_page_base_html = file_get_contents(dirname(__DIR__).'/ui/page/top.html');
-      $horizontal_card = file_get_contents(dirname(__DIR__).'/ui/part/horizontal-card.html');
+      $top_page_base_html = file_get_contents(dirname(__DIR__).'/view/html/page/top.html');
+      $horizontal_card = file_get_contents(dirname(__DIR__).'/view/html/part/horizontal-card.html');
 
       $post_list_fragment = "";
 
