@@ -11,7 +11,11 @@
     <ul>
       <li></li>
     </ul>
+<<<<<<< HEAD:src/view/html/top.html
     <form action="posts" method="post">
+=======
+    <form action="/" method="post">
+>>>>>>> 968dfe0 (Validate form input):src/page/top.html
       <label for="post-title">タイトル</label>
       <input
         id="post-title"
@@ -19,6 +23,7 @@
         type="text"
         name="post-title"
       />
+      %invalid_title%
       <label for="post-body">本文</label>
       <input
         id="post-body"
@@ -26,6 +31,7 @@
         type="text"
         name="post-body"
       />
+      %invalid_body%
       <button type="submit">送信する</button>
       <ul>
         %post_list%
