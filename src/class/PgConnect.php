@@ -1,14 +1,18 @@
 <?php
   class PgConnect
   {
-    private static $dsn = 'pgsql:dbname=kenshu_backend_php host=database port=5432';
-    private static $user = 'postgres';
-    private static $password = 'kenshu_backend_php';
     public static PDO | null $client = null;
 
     public static function getClient() {
       if (is_null(static::$client)) {
-        static::$client = new PDO(static::$dsn, static::$user, static::$password, array(PDO::ATTR_PERSISTENT => true));
+        $db_name = getenv("DB_NAME");
+        $host = getenv("DB_HOST");
+        $port = getenv("DB_PORT");
+        $user = getenv("DB_USER");
+        $password = getenv("DB_PASSWORD");
+        $dsn = "pgsql:dbname=".$db_name." "."host=".$host." "."port=".$port;
+
+        static::$client = new PDO($dsn, $user, $password, array(PDO::ATTR_PERSISTENT => true));
       }
       return static::$client;
     }
