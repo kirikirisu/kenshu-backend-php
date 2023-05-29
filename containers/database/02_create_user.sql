@@ -1,0 +1,2 @@
+INSERT INTO users (name, email, password, icon_url) VALUES ('bob', 'bob@bob.com', 'bobbob', 'https://1.bp.blogspot.com/-Na00Q49BuPg/XJB5IFwcscI/AAAAAAABR8g/aWBDjkVwnHU2CVeLX2dgklqWQdz03DU4wCLcBGAs/s400/pistol_pose_man.png');
+INSERT INTO users (name, email, password, icon_url) VALUES ('kiri', 'kiri@kiri.com', 'kirikiri', 'https://2.bp.blogspot.com/-Re33qqlAZQA/W3abdHNDcmI/AAAAAAABOBk/AeGvRNPmRsIxsk7nS1h_pQiCtF84cyQOACLcBGAs/s400/lucky_yotsuba_clover_boy.png');
