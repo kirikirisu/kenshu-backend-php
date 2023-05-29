@@ -1,7 +1,7 @@
 <?php
-  require_once(dirname(__DIR__, 1)."/class/PostPayload.php");
+  require_once(dirname(__DIR__, 1)."/client/PostPayload.php");
   require_once(dirname(__DIR__, 1)."/model/Post.php");
-  require_once(dirname(__DIR__, 1)."/class/PgConnect.php");
+  require_once(dirname(__DIR__, 1)."/lib/PgConnect.php");
 
   class PostClient {
     public function __construct(

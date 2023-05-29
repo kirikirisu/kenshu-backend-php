@@ -9,7 +9,7 @@
     * @param Post[] $data_chunk
     */
     public function topPage($data_chunk) {
-      $html_file_path = dirname(__DIR__).'/page/top.html';
+      $html_file_path = dirname(__DIR__).'/view/html/top.html';
       $top_page_html = file_get_contents($html_file_path);
       $post_list_fragment = "";
 
