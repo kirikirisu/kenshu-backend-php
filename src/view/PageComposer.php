@@ -14,7 +14,7 @@
       $post_list_fragment = "";
 
       foreach($data_chunk as $post) {
-        $post_list_fragment = $post_list_fragment."<li>".$post->title."</li>\n";
+        $post_list_fragment = $post_list_fragment."<li>".htmlspecialchars($post->title)."</li>\n";
       }
 
       $this->page = str_replace("%post_list%", $post_list_fragment, $top_page_html);

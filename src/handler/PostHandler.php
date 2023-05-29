@@ -15,11 +15,9 @@
     }
 
     public static function createPost(): void {
-      $title = htmlspecialchars($_POST['post-title']);
-      $body = htmlspecialchars($_POST['post-body']);
-      
+
       $post_client = new PostClient();
-      $payload = new PostPayload(2, $title, $body, 1);
+      $payload = new PostPayload(user_id: 2, title: $_POST['post-title'], body: $_POST['post-body'], thumbnail_id: 1);
       $post_client->createPost($payload);
 
       header("Location: http://localhost:8080", true, 303);
