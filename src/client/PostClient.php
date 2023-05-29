@@ -13,7 +13,7 @@
      * @return Post[]
     */
     public function getPostList() {
-      $query = "SELECT * from posts";
+      $query = "SELECT * from posts ORDER BY id DESC";
       $res = $this->pdo->query($query);
       $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
       $post_list = [];
