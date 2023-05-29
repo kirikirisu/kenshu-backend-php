@@ -1,13 +1,12 @@
 <?php
   require_once(dirname(__DIR__, 1)."/class/PostPayload.php");
   require_once(dirname(__DIR__, 1)."/model/Post.php");
+  require_once(dirname(__DIR__, 1)."/class/PgConnect.php");
 
   class PostClient {
-    public PDO $pdo;
-
-    public function __construct(PDO $pdo)
-    {
-      $this->pdo = $pdo;
+    public function __construct(
+      public ?PDO $pdo = null) {
+        if (is_null($pdo)) $this->pdo = PgConnect::getClient();
     }
 
     /**
