@@ -8,7 +8,7 @@
     /**
     * @param Post[] $data_chunk
     */
-    public function topPage($data_chunk) {
+    public function topPage(array $data_chunk): void {
       $html_file_path = dirname(__DIR__).'/view/html/top.html';
       $top_page_html = file_get_contents($html_file_path);
       $post_list_fragment = "";
@@ -22,7 +22,7 @@
 
     public function postDetailPage() {}
 
-    public function renderHTML() {
+    public function renderHTML(): void {
       echo $this->page;
     }
   }

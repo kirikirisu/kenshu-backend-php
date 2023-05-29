@@ -5,7 +5,7 @@
 
   class PostHandler 
   {
-    public static function getPostListPage() {
+    public static function getPostListPage(): void {
       $post_client = new PostClient();
       $post_list = $post_client->getPostList();
 
@@ -14,7 +14,7 @@
       $compose->renderHTML();
     }
 
-    public static function createPost() {
+    public static function createPost(): void {
       $title = htmlspecialchars($_POST['post-title']);
       $body = htmlspecialchars($_POST['post-body']);
       
@@ -23,7 +23,6 @@
       $post_client->createPost($payload);
 
       header("Location: http://localhost:8080", true, 303);
-      exit;
     }
 
   }

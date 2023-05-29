@@ -12,7 +12,7 @@
     /**
      * @return Post[]
     */
-    public function getPostList() {
+    public function getPostList(): array {
       $query = "SELECT * from posts";
       $res = $this->pdo->query($query);
       $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
@@ -29,7 +29,7 @@
       
     }
 
-    public function createPost(PostPayload $payload) {
+    public function createPost(PostPayload $payload): void {
       $query = "INSERT INTO posts (user_id, title, body, thumbnail_id) VALUES (:user_id, :title, :body, :thumbnail_id)";
       $stmt = $this->pdo->prepare($query);
       $stmt->bindParam(":user_id", $payload->user_id);

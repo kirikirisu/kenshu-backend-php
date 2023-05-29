@@ -3,7 +3,7 @@
   {
     public static PDO | null $client = null;
 
-    public static function getClient() {
+    public static function getClient(): PDO {
       if (is_null(static::$client)) {
         $db_name = getenv("DB_NAME");
         $host = getenv("DB_HOST");
