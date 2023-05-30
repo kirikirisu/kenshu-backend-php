@@ -11,5 +11,7 @@ if ($request_method === "GET" && $request_url === "/") {
 } else if ($request_method === "POST" && $request_url === "/") {
     PostHandler::createPost(PageCompose::getComposer());
 
-} else if ($request_method === "GET" && $request_url === "/posts/:id") {
+} else if ($request_method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $request_url, $match)) {
+    $post_id = $match[1];
+    PostHandler::getPostDetailPage(post_id: $post_id);
 }

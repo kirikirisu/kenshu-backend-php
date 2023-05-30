@@ -18,7 +18,8 @@ class PageComposer
         $post_list_fragment = "";
 
         foreach ($data_chunk as $post) {
-            $post_list_fragment = $post_list_fragment . str_replace("%title%", htmlspecialchars($post->title), $horizontal_card);
+            $injected_title = str_replace("%title%", htmlspecialchars($post->title), $horizontal_card);
+            $post_list_fragment = $post_list_fragment . str_replace("%post_id%", $post->id, $injected_title);
         }
 
         $this->page = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
@@ -39,8 +40,11 @@ class PageComposer
         return $this;
     }
 
-    public function postDetailPage()
+    public function postDetailPage(Post $post)
     {
+        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
+        $title_replaced= str_replace("%title%", $post->title, $post_detail_page_base_html);
+        $this->page = str_replace("%body%", $post->body, $title_replaced);
     }
 
     public function renderHTML(): void

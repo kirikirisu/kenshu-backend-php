@@ -28,9 +28,15 @@ class PostClient
         return $post_list;
     }
 
-    public function getPostById()
+    public function getPostById(string $id): Post
     {
+        $query = "SELECT * from posts WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $raw_post = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
 
+        return new Post(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
     }
 
     public function createPost(IndexPostDto $payload): void
