@@ -54,30 +54,3 @@ class PostHandler
         return $error_list;
     }
 }
-
-class ValidatePost
-{
-    public string $title;
-    public string $body;
-    /** @var InputError[] $error_list */
-    public array $error_list = [];
-
-    public function __construct(string $title, string $body)
-    {
-        $this->title = $title;
-        $this->body = $body;
-    }
-
-    /** @return InputError[] */
-    public function validate(): array
-    {
-        if ($this->title === "") {
-            $this->error_list[] = new InputError("タイトルを入力してください。", "title");
-        }
-        if ($this->body === "") {
-            $this->error_list[] = new InputError("本文を入力してください。", "body");
-        }
-
-        return $this->error_list;
-    }
-}
