@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
 require_once(dirname(__DIR__, 1) . "/model/Post.php");
-require_once(dirname(__DIR__, 1) . "/lib/PgConnect.php");
+require_once(dirname(__DIR__, 1) . "/lib/Singleton/PgConnect.php");
 
 class PostClient
 {
