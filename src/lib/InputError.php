@@ -1,5 +1,7 @@
 <?php
-class InputError {
+
+class InputError
+{
     public string $message;
     public string $field;
 

@@ -16,7 +16,7 @@ class PostClient
      */
     public function getPostList(): array
     {
-        $query = "SELECT * from posts ORDER BY id DESC";
+         $query = "SELECT * from posts ORDER BY id DESC";
         $res = $this->pdo->query($query);
         $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
         $post_list = [];
