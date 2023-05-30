@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/client/PostPayload.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
 require_once(dirname(__DIR__, 1) . "/model/Post.php");
 require_once(dirname(__DIR__, 1) . "/lib/PgConnect.php");
 
@@ -16,7 +16,7 @@ class PostClient
      */
     public function getPostList(): array
     {
-         $query = "SELECT * from posts ORDER BY id DESC";
+        $query = "SELECT * from posts ORDER BY id DESC";
         $res = $this->pdo->query($query);
         $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
         $post_list = [];
@@ -33,7 +33,7 @@ class PostClient
 
     }
 
-    public function createPost(PostPayload $payload): void
+    public function createPost(IndexPostDto $payload): void
     {
         $query = "INSERT INTO posts (user_id, title, body, thumbnail_id) VALUES (:user_id, :title, :body, :thumbnail_id)";
         $stmt = $this->pdo->prepare($query);

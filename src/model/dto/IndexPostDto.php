@@ -1,6 +1,6 @@
 <?php
 
-class PostPayload
+class IndexPostDto
 {
     public function __construct(
         public int    $user_id,

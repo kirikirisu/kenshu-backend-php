@@ -1,6 +1,6 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
-require_once(dirname(__DIR__, 1) . "/client/PostPayload.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
 require_once(dirname(__DIR__, 1) . "/view/PageComposer.php");
 require_once (dirname(__DIR__, 1)) . "/lib/Errors/InputError.php";
 
@@ -27,12 +27,11 @@ class PostHandler
             $post_list = $post_client->getPostList();
 
             $compose = new PageComposer();
-            $compose->topPage($post_list, $error_list);
-            $compose->renderHTML();
+            $compose->topPage($post_list, $error_list)->renderHTML();
             exit;
         }
 
-        $payload = new PostPayload(2, $title, $body, 1);
+        $payload = new IndexPostDto(2, $title, $body, 1);
         $post_client->createPost($payload);
 
         header("Location: http://localhost:8080", true, 303);
