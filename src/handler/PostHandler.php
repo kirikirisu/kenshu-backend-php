@@ -2,7 +2,7 @@
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
 require_once(dirname(__DIR__, 1) . "/client/PostPayload.php");
 require_once(dirname(__DIR__, 1) . "/view/PageComposer.php");
-require_once (dirname(__DIR__, 1))."/lib/InputError.php";
+require_once (dirname(__DIR__, 1)) . "/lib/InputError.php";
 
 class PostHandler
 {
@@ -21,8 +21,7 @@ class PostHandler
         $title = $_POST['post-title'];
         $body = $_POST['post-body'];
 
-        $raw_post = new ValidatePost(title: $title, body: $body);
-        $error_list = $raw_post->validate();
+        $error_list = static::validatePost(title: $title, body: $body);
 
         $post_client = new PostClient();
         if (count($error_list) > 0) {
@@ -39,9 +38,25 @@ class PostHandler
 
         header("Location: http://localhost:8080", true, 303);
     }
+
+    public static function validatePost(string $title, string $body): array
+    {
+        /** @var InputError[] $error_list */
+        $error_list = [];
+
+        if ($title === "") {
+            $error_list[] = new InputError("タイトルを入力してください。", "title");
+        }
+        if ($body === "") {
+            $error_list[] = new InputError("本文を入力してください。", "body");
+        }
+
+        return $error_list;
+    }
 }
 
-class ValidatePost {
+class ValidatePost
+{
     public string $title;
     public string $body;
     /** @var InputError[] $error_list */
@@ -54,7 +69,8 @@ class ValidatePost {
     }
 
     /** @return InputError[] */
-    public function validate(): array {
+    public function validate(): array
+    {
         if ($this->title === "") {
             $this->error_list[] = new InputError("タイトルを入力してください。", "title");
         }
