@@ -1,6 +1,6 @@
 <?php
   require_once(dirname(__DIR__, 1)."/model/Post.php");
-  require_once(dirname(__DIR__, 1)."/lib/InputError.php");
+  require_once(dirname(__DIR__, 1) . "/lib/Errors/InputError.php");
 
   class PageComposer
   {

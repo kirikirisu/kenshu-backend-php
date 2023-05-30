@@ -2,7 +2,7 @@
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
 require_once(dirname(__DIR__, 1) . "/client/PostPayload.php");
 require_once(dirname(__DIR__, 1) . "/view/PageComposer.php");
-require_once (dirname(__DIR__, 1)) . "/lib/InputError.php";
+require_once (dirname(__DIR__, 1)) . "/lib/Errors/InputError.php";
 
 class PostHandler
 {
