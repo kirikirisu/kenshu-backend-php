@@ -1,1 +1,5 @@
-postgres-data/
+memo.md
+memo.php
+apache2.conf
+.idea
+.DS_Store
