@@ -12,8 +12,7 @@ class PostHandler
         $post_list = $post_client->getPostList();
 
         $compose = new PageComposer();
-        $compose->topPage($post_list);
-        $compose->renderHTML();
+        $compose->topPage($post_list)->renderHTML();
     }
 
     public static function createPost(): void
