@@ -40,11 +40,13 @@ class PageComposer
         return $this;
     }
 
-    public function postDetailPage(Post $post)
+    public function postDetailPage(Post $post): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
         $title_replaced= str_replace("%title%", $post->title, $post_detail_page_base_html);
         $this->page = str_replace("%body%", $post->body, $title_replaced);
+
+        return $this;
     }
 
     public function renderHTML(): void

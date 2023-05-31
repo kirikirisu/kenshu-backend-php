@@ -35,14 +35,12 @@ class PostHandler
         header("Location: http://localhost:8080", true, 303);
     }
 
-    public static function getPostDetailPage(string $post_id)
+    public static function getPostDetailPage(string $post_id, PageComposer $compose)
     {
         $post_client = new PostClient();
         $post = $post_client->getPostById($post_id);
 
-        $compose = new PageComposer();
-        $compose->postDetailPage($post);
-        $compose->renderHTML();
+        $compose->postDetailPage($post)->renderHTML();
     }
 
     public static function validatePost(string $title, string $body): array

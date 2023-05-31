@@ -6,12 +6,12 @@ $request_url = $_SERVER["REQUEST_URI"];
 $request_method = $_SERVER["REQUEST_METHOD"];
 
 if ($request_method === "GET" && $request_url === "/") {
-    PostHandler::getPostListPage(PageCompose::getComposer());
+    PostHandler::getPostListPage(compose: PageCompose::getComposer());
 
 } else if ($request_method === "POST" && $request_url === "/") {
-    PostHandler::createPost(PageCompose::getComposer());
+    PostHandler::createPost(compose:  PageCompose::getComposer());
 
 } else if ($request_method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $request_url, $match)) {
     $post_id = $match[1];
-    PostHandler::getPostDetailPage(post_id: $post_id);
+    PostHandler::getPostDetailPage(post_id: $post_id, compose: PageCompose::getComposer());
 }
