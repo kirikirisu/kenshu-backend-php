@@ -49,4 +49,8 @@ class PostClient
         $stmt->bindParam(":thumbnail_id", $payload->thumbnail_id);
         $stmt->execute();
     }
+
+    public function updatePost(): Post
+    {
+    }
 }

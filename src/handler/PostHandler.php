@@ -43,6 +43,20 @@ class PostHandler
         $compose->postDetailPage($post)->renderHTML();
     }
 
+    public static function getEditPage(string $post_id, PageComposer $compose)
+    {
+        $post_client = new PostClient();
+        $post = $post_client->getPostById($post_id);
+
+        $compose->getPostEditPage(post: $post)->renderHTML();
+    }
+
+//    public static function updatePost(string $post_id)
+//    {
+//        $post_client = new PostClient();
+//        $post = $post_client
+//    }
+
     public static function validatePost(string $title, string $body): array
     {
         /** @var InputError[] $error_list */

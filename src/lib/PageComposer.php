@@ -49,6 +49,16 @@ class PageComposer
         return $this;
     }
 
+    public function getPostEditPage(Post $post): self {
+        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
+        $title_replaced= str_replace("%title%", $post->title, $edit_post_page_base_html);
+        $this->page = str_replace("%body%", $post->body, $title_replaced);
+
+        $this->page = str_replace("%invalid_title%", "", $this->page);
+        $this->page = str_replace("%invalid_body%", "", $this->page);
+        return $this;
+    }
+
     public function renderHTML(): void
     {
         echo $this->page;
