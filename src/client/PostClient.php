@@ -50,7 +50,15 @@ class PostClient
         $stmt->execute();
     }
 
-    public function updatePost(): Post
+//    public function updatePost(): Post
+//    {
+//    }
+
+    public function deletePost(string $post_id): void
     {
+        $query = "DELETE FROM posts WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $post_id);
+        $stmt->execute();
     }
 }

@@ -24,13 +24,11 @@ if ($request_method === "GET" && $request_url === "/") {
 
 } else if ($request_method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
     $post_id = $match[1];
-
-//    header("Location:  http://localhost:8080", true,303);
-    $redirect_url = "http://localhost:8080/posts/" . $post_id;
-    header('Content-Type: application/json');
-    echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
-    exit;
+    PostHandler::deletePost(post_id: $post_id);
+//    $redirect_url = "http://localhost:8080/";
+//    header('Content-Type: application/json');
+//    echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
 
 } else {
-    echo "<h1>Page Not Found.</h1>" . $request_url.$request_method;
+    echo "<h1>Page Not Found.</h1>\n" . $request_url . $request_method;
 }

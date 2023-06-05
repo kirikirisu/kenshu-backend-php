@@ -27,7 +27,7 @@
 		async function deletePost() {
 			const pathList = location.pathname.split("/");
 			const postId = pathList[pathList.length - 1];
-			const url = `http://localhost:8080/posts/${postId}`;
+			const url = `http://localhost:8080/posts/${postId}/edit`;
 
 			await fetchWithRedirect("DELETE", url, { postId })
 		}

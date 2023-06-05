@@ -57,6 +57,17 @@ class PostHandler
 //        $post = $post_client
 //    }
 
+    public static function deletePost(string $post_id): void
+    {
+        $post_client = new PostClient();
+        $post_client->deletePost($post_id);
+
+//        header("Location:  http://localhost:8080", true,303);
+        $redirect_url = "http://localhost:8080/";
+        header('Content-Type: application/json');
+        echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
+    }
+
     public static function validatePost(string $title, string $body): array
     {
         /** @var InputError[] $error_list */
