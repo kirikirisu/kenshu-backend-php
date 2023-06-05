@@ -21,13 +21,11 @@ if ($request_method === "GET" && $request_url === "/") {
 
 } else if ($request_method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
     $post_id = $match[1];
+    PostHandler::updatePost($post_id);
 
 } else if ($request_method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
     $post_id = $match[1];
     PostHandler::deletePost(post_id: $post_id);
-//    $redirect_url = "http://localhost:8080/";
-//    header('Content-Type: application/json');
-//    echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
 
 } else {
     echo "<h1>Page Not Found.</h1>\n" . $request_url . $request_method;

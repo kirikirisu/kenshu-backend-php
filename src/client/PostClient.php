@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/UpdatePostDto.php");
 require_once(dirname(__DIR__, 1) . "/model/Post.php");
 require_once(dirname(__DIR__, 1) . "/lib/Singleton/PgConnect.php");
 
@@ -50,9 +51,16 @@ class PostClient
         $stmt->execute();
     }
 
-//    public function updatePost(): Post
-//    {
-//    }
+    public function updatePost(string $post_id, UpdatePostDto $dto): void
+    {
+        $query = "UPDATE posts SET title = :title, body = :body, thumbnail_id = :thumbnail_id WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $post_id);
+        $stmt->bindParam(":title", $dto->title);
+        $stmt->bindParam(":body", $dto->body);
+        $stmt->bindParam(":thumbnail_id", $dto->thumbnail_id);
+        $stmt->execute();
+    }
 
     public function deletePost(string $post_id): void
     {

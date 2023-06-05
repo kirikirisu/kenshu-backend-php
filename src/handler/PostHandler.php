@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
 require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/UpdatePostDto.php");
 require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
 require_once (dirname(__DIR__, 1)) . "/lib/Errors/InputError.php";
 
@@ -51,11 +52,18 @@ class PostHandler
         $compose->getPostEditPage(post: $post)->renderHTML();
     }
 
-//    public static function updatePost(string $post_id)
-//    {
-//        $post_client = new PostClient();
-//        $post = $post_client
-//    }
+    public static function updatePost(string $post_id): void
+    {
+        $body = file_get_contents('php://input');
+        $data = json_decode($body);
+        $post_client = new PostClient();
+        $dto = new UpdatePostDto(title: $data->title, body: $data->body, thumbnail_id: 1);
+        $post_client->updatePost($post_id, $dto);
+
+        $redirect_url = "http://localhost:8080/posts/".$post_id;
+        header('Content-Type: application/json');
+        echo json_encode(array('message' => 'Patch request succeeded', 'redirectUrl' => $redirect_url));
+    }
 
     public static function deletePost(string $post_id): void
     {
