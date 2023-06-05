@@ -43,7 +43,7 @@
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
-	<form class="w-2/5">
+	<form class="w-2/5" onsubmit="updatePost(document)">
 		<label for="post-title" class="block text-base font-semibold"
 		>タイトル</label
 		>
@@ -79,7 +79,6 @@
 		<button
 				type="submit"
 				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"
-				onclick="updatePost(document)"
 		>
 			送信する
 		</button>
