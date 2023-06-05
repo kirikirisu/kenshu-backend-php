@@ -43,16 +43,16 @@ class PageComposer
     public function postDetailPage(Post $post): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
-        $title_replaced= str_replace("%title%", $post->title, $post_detail_page_base_html);
-        $this->page = str_replace("%body%", $post->body, $title_replaced);
+        $title_replaced= str_replace("%title%", htmlspecialchars($post->title), $post_detail_page_base_html);
+        $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
 
         return $this;
     }
 
     public function getPostEditPage(Post $post): self {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
-        $title_replaced= str_replace("%title%", $post->title, $edit_post_page_base_html);
-        $this->page = str_replace("%body%", $post->body, $title_replaced);
+        $title_replaced= str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
+        $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
 
         $this->page = str_replace("%invalid_title%", "", $this->page);
         $this->page = str_replace("%invalid_body%", "", $this->page);
