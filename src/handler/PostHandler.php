@@ -21,15 +21,9 @@ class PostHandler
         $body = $_POST['post-body'];
 
         $error_list = static::validatePost(title: $title, body: $body);
+        if (count($error_list) > 0) static::renderTopPageWithError($compose, $error_list);
 
         $post_client = new PostClient();
-        if (count($error_list) > 0) {
-            $post_list = $post_client->getPostList();
-
-            $compose->topPage($post_list, $error_list)->renderHTML();
-            exit;
-        }
-
         $payload = new IndexPostDto(2, $title, $body, 1);
         $post_client->createPost($payload);
 
@@ -52,16 +46,24 @@ class PostHandler
         $compose->getPostEditPage(post: $post)->renderHTML();
     }
 
-    public static function updatePost(string $post_id): void
+    public static function updatePost(string $post_id, PageComposer $compose): void
     {
         $body = file_get_contents('php://input');
         $data = json_decode($body);
+
+        $error_list = static::validatePost(title: $data->title, body: $data->body);
+        if (count($error_list) > 0) {
+            header('Content-Type: application/json', true, 400);
+            echo json_encode(array('message' => 'Patch request faild', 'errorMessage' => $error_list));
+            exit;
+        }
+
         $post_client = new PostClient();
         $dto = new UpdatePostDto(title: $data->title, body: $data->body, thumbnail_id: 1);
         $post_client->updatePost($post_id, $dto);
 
-        $redirect_url = "http://localhost:8080/posts/".$post_id;
-        header('Content-Type: application/json');
+        $redirect_url = "http://localhost:8080/posts/" . $post_id;
+        header('Content-Type: application/json', true, 201);
         echo json_encode(array('message' => 'Patch request succeeded', 'redirectUrl' => $redirect_url));
     }
 
@@ -89,5 +91,18 @@ class PostHandler
         }
 
         return $error_list;
+    }
+
+    /**
+     * @param PageComposer $compose
+     * @param InputError[] $error_list
+     */
+    public static function renderTopPageWithError(PageComposer $compose, array $error_list)
+    {
+        $post_client = new PostClient();
+        $post_list = $post_client->getPostList();
+
+        $compose->topPage($post_list, $error_list)->renderHTML();
+        exit;
     }
 }

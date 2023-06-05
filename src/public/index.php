@@ -21,7 +21,7 @@ if ($request_method === "GET" && $request_url === "/") {
 
 } else if ($request_method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
     $post_id = $match[1];
-    PostHandler::updatePost($post_id);
+    PostHandler::updatePost($post_id, compose: PageCompose::getComposer());
 
 } else if ($request_method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
     $post_id = $match[1];
