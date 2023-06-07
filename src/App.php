@@ -9,9 +9,6 @@ class App
     public function run()
     {
         $handler = Route::getHandler($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-
-//        $req = new Request(method: $_SERVER['REQUEST_METHOD'], path: $_SERVER['REQUEST_URI']);
-
         $handler->run();
 
 //        http_response_code($res['status_code']);
