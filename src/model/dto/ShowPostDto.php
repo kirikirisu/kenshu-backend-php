@@ -1,6 +1,6 @@
 <?php
 
-class Post
+class ShowPostDto
 {
     public function __construct(
         public int    $id,

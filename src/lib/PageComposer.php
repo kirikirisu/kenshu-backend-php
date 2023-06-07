@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/model/Post.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/ShowPostDto.php");
 require_once(dirname(__DIR__, 1) . "/lib/Errors/InputError.php");
 
 class PageComposer
@@ -7,7 +7,7 @@ class PageComposer
     public string $page = "";
 
     /**
-     * @param Post[] $data_chunk
+     * @param ShowPostDto[] $data_chunk
      * @param InputError[] $error_list
      */
     public function topPage(array $data_chunk, array $error_list = null): self
@@ -40,7 +40,7 @@ class PageComposer
         return $this;
     }
 
-    public function postDetailPage(Post $post): self
+    public function postDetailPage(ShowPostDto $post): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
         $title_replaced= str_replace("%title%", htmlspecialchars($post->title), $post_detail_page_base_html);
@@ -49,7 +49,7 @@ class PageComposer
         return $this;
     }
 
-    public function getPostEditPage(Post $post): self {
+    public function getPostEditPage(ShowPostDto $post): self {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
         $title_replaced= str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
         $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);

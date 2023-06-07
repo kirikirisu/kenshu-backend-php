@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
 require_once(dirname(__DIR__, 1) . "/model/dto/UpdatePostDto.php");
-require_once(dirname(__DIR__, 1) . "/model/Post.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/ShowPostDto.php");
 require_once(dirname(__DIR__, 1) . "/lib/Singleton/PgConnect.php");
 
 class PostClient
@@ -13,7 +13,7 @@ class PostClient
     }
 
     /**
-     * @return Post[]
+     * @return ShowPostDto[]
      */
     public function getPostList(): array
     {
@@ -23,13 +23,13 @@ class PostClient
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
-            $post_list[] = new Post(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
         }
 
         return $post_list;
     }
 
-    public function getPostById(int $id): Post
+    public function getPostById(int $id): ShowPostDto
     {
         $query = "SELECT * from posts WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -37,7 +37,7 @@ class PostClient
         $stmt->execute();
         $raw_post = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
 
-        return new Post(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
+        return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
     }
 
     public function createPost(IndexPostDto $payload): void
