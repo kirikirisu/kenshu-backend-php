@@ -30,7 +30,7 @@ class PostHandler
         header("Location: http://localhost:8080", true, 303);
     }
 
-    public static function getPostDetailPage(string $post_id, PageComposer $compose)
+    public static function getPostDetailPage(int $post_id, PageComposer $compose)
     {
         $post_client = new PostClient();
         $post = $post_client->getPostById($post_id);
@@ -38,7 +38,7 @@ class PostHandler
         $compose->postDetailPage($post)->renderHTML();
     }
 
-    public static function getEditPage(string $post_id, PageComposer $compose)
+    public static function getEditPage(int $post_id, PageComposer $compose)
     {
         $post_client = new PostClient();
         $post = $post_client->getPostById($post_id);
@@ -46,7 +46,7 @@ class PostHandler
         $compose->getPostEditPage(post: $post)->renderHTML();
     }
 
-    public static function updatePost(string $post_id, PageComposer $compose): void
+    public static function updatePost(int $post_id, PageComposer $compose): void
     {
         $body = file_get_contents('php://input');
         $data = json_decode($body);

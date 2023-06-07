@@ -29,7 +29,7 @@ class PostClient
         return $post_list;
     }
 
-    public function getPostById(string $id): Post
+    public function getPostById(int $id): Post
     {
         $query = "SELECT * from posts WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
@@ -51,7 +51,7 @@ class PostClient
         $stmt->execute();
     }
 
-    public function updatePost(string $post_id, UpdatePostDto $dto): void
+    public function updatePost(int $post_id, UpdatePostDto $dto): void
     {
         $query = "UPDATE posts SET title = :title, body = :body, thumbnail_id = :thumbnail_id WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
