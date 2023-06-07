@@ -19,13 +19,34 @@ class PostHandler
     {
         $title = $_POST['post-title'];
         $body = $_POST['post-body'];
+        $image_list = $_FILES['images'];
+        $main_image = $_POST['main-image'];
 
-        $error_list = static::validatePost(title: $title, body: $body);
+        $error_list = static::validatePost(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) static::renderTopPageWithError($compose, $error_list);
 
+        $thumbnail_image_id = "";
+        $upload_dir = dirname(__DIR__) . "/public/assets/images/";
+        foreach ($image_list['error'] as $key => $error) {
+            if ($error == UPLOAD_ERR_OK) {
+                $file_name = $_FILES['images']['name'][$key];
+                $temp_file_path = $_FILES['images']['tmp_name'][$key];
+
+                $uniqu_file_name = sprintf('%s_%s.%s', pathinfo($file_name, PATHINFO_FILENAME), time(), pathinfo($file_name, PATHINFO_EXTENSION));
+                $target_file_path = sprintf('%s%s', $upload_dir, $uniqu_file_name );
+
+                if ($file_name === $main_image) {
+                    $thumbnail_image_id = $target_file_path;
+                }
+                move_uploaded_file($temp_file_path, $target_file_path);
+            }
+        }
+
         $post_client = new PostClient();
-        $payload = new IndexPostDto(2, $title, $body, 1);
+        $payload = new IndexPostDto(user_id: 2, title: $title, body: $body, thumbnail_id: $thumbnail_image_id);
+//      post_id を返したい
         $post_client->createPost($payload);
+//      imageClientを作ってimagesテーブルに投稿(post_id)と紐付けて画像を保存する
 
         header("Location: http://localhost:8080", true, 303);
     }
@@ -78,7 +99,7 @@ class PostHandler
         echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
     }
 
-    public static function validatePost(string $title, string $body): array
+    public static function validatePost(string $title, string $body, string $main_image): array
     {
         /** @var InputError[] $error_list */
         $error_list = [];
@@ -88,6 +109,9 @@ class PostHandler
         }
         if ($body === "") {
             $error_list[] = new InputError("本文を入力してください。", "body");
+        }
+        if ($main_image === "") {
+            $error_list[] = new InputError("メイン画像を選択してください", "image");
         }
 
         return $error_list;

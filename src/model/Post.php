@@ -7,7 +7,7 @@ class Post
         public int    $user_id,
         public string $title,
         public string $body,
-        public int    $thumbnail_id)
+        public string $thumbnail_id)
     {
     }
 }
