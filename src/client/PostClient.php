@@ -40,15 +40,17 @@ class PostClient
         return new Post(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
     }
 
-    public function createPost(IndexPostDto $payload): void
+    public function createPost(IndexPostDto $payload): int
     {
-        $query = "INSERT INTO posts (user_id, title, body, thumbnail_id) VALUES (:user_id, :title, :body, :thumbnail_id)";
+        $query = "INSERT INTO posts (user_id, title, body, thumbnail_id) VALUES (:user_id, :title, :body, :thumbnail_id) RETURNING id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":user_id", $payload->user_id);
         $stmt->bindParam(":title", $payload->title);
         $stmt->bindParam(":body", $payload->body);
         $stmt->bindParam(":thumbnail_id", $payload->thumbnail_id);
         $stmt->execute();
+        $result = $stmt->fetch();
+        return $result['id'];
     }
 
     public function updatePost(string $post_id, UpdatePostDto $dto): void

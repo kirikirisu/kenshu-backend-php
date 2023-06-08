@@ -1,5 +1,4 @@
 <?php
-
 class ImageClient
 {
     public function __construct(
