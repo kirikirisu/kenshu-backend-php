@@ -1,1 +1,1 @@
-SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'posts';
+ALTER TABLE posts ALTER COLUMN thumbnail_id TYPE VARCHAR(10000);
