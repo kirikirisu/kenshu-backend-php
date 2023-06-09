@@ -11,10 +11,15 @@ class App
         $request_method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
         $handler = Route::getHandler($request_method, $_SERVER['REQUEST_URI']);
-        $handler->run();
+        $res = $handler->run();
 
-//        http_response_code($res['status_code']);
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo $res['body'];
+        if (is_null($res->html)) {
+            $redirect_header = sprintf('Location: %s', $res->redirect_url);
+            header($redirect_header, true, $res->status_code);
+        }
+
+        http_response_code($res->status_code);
+        header('Content-Type: text/html; charset=utf-8');
+        echo $res->html;
     }
 }

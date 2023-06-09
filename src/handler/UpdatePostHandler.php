@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class UpdatePostHandler
 {
@@ -9,7 +10,7 @@ class UpdatePostHandler
     {
     }
 
-    public function run()
+    public function run(): Response
     {
         $title = $_POST['post-title'];
         $body = $_POST['post-body'];
@@ -24,8 +25,8 @@ class UpdatePostHandler
         $dto = new UpdatePostDto(title: $title, body: $body, thumbnail_id: 1);
         $this->post_client->updatePost($this->post_id, $dto);
 
-        $redirect_header = sprintf('Location: %s', "http://localhost:8080/posts/" . $this->post_id);
-        header($redirect_header, true, 303);
+        $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
+        return new Response(status_code: 303, redirect_url: $redirect_url);
     }
 
     public static function validatePost(string $title, string $body): array

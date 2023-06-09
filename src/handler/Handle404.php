@@ -1,9 +1,10 @@
 <?php
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class Handle404
 {
-    public function run()
+    public function run(): Response
     {
-        echo "<h1>Page Not Found.</h1>\n";
+        return new Response(status_code: 404, html: "<h1>Page not found.</h1>");
     }
 }

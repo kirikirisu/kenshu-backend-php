@@ -2,6 +2,7 @@
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
 require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
 require_once(dirname(__DIR__, 1). "/lib/Http/Request.php");
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class CreatePostHandler
 {
@@ -11,7 +12,7 @@ class CreatePostHandler
     {
     }
 
-    public function run()
+    public function run(): Response
     {
         $title = $_POST['post-title'];
         $body = $_POST['post-body'];
@@ -22,7 +23,7 @@ class CreatePostHandler
         $payload = new IndexPostDto(2, $title, $body, 1);
         $this->post_client->createPost($payload);
 
-        header("Location: http://localhost:8080", true, 303);
+        return new Response(status_code: 303, redirect_url: "http://localhost:8080");
     }
 
 

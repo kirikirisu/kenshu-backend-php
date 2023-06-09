@@ -2,6 +2,7 @@
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
 require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
 require_once(dirname(__DIR__) . "/client/PostClient.php");
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class GetTopPageHandler
 {
@@ -11,10 +12,12 @@ class GetTopPageHandler
     {
     }
 
-    public function run()
+    public function run(): Response
     {
         $post_list = $this->post_client->getPostList();
 
-        $this->compose->topPage($post_list)->renderHTML();
+        $html = $this->compose->topPage($post_list)->getHtml();
+
+        return new Response(status_code: 200, html: $html);
     }
 }

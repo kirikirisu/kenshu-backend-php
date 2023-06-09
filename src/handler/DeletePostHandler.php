@@ -1,5 +1,6 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class DeletePostHandler
 {
@@ -9,10 +10,10 @@ class DeletePostHandler
     {
     }
 
-    public function run(): void
+    public function run(): Response
     {
         $this->post_client->deletePost($this->post_id);
 
-        header("Location: http://localhost:8080", true, 303);
+        return new Response(status_code: 303, redirect_url: "http://localhost:8080");
     }
 }
