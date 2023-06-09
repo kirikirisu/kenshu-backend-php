@@ -7,6 +7,7 @@ require_once(dirname(__DIR__) . "/src/handler/GetPostDetailPageHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/GetPostEditPageHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/UpdatePostHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/DeletePostHandler.php");
+require_once(dirname(__DIR__) . "/src/handler/Handle404.php");
 
 class Route
 {
@@ -35,7 +36,6 @@ class Route
             return new DeletePostHandler(post_id: $post_id, post_client: new PostClient());
 
         }
-
-        echo "<h1>Page Not Found.</h1>\n" . $request_url . $request_method;
+        return new Handle404();
     }
 }
