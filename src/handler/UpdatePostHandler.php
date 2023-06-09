@@ -11,22 +11,21 @@ class UpdatePostHandler
 
     public function run()
     {
-        $body = file_get_contents('php://input');
-        $data = json_decode($body);
+        $title = $_POST['post-title'];
+        $body = $_POST['post-body'];
 
-        $error_list = static::validatePost(title: $data->title, body: $data->body);
-        if (count($error_list) > 0) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(array('message' => 'Patch request faild', 'errorMessage' => $error_list));
-            exit;
-        }
+//        $error_list = static::validatePost(title: $title, body: $body);
+//        if (count($error_list) > 0) {
+//            header('Content-Type: application/json', true, 400);
+//            echo json_encode(array('message' => 'Patch request faild', 'errorMessage' => $error_list));
+//            exit;
+//        }
 
-        $dto = new UpdatePostDto(title: $data->title, body: $data->body, thumbnail_id: 1);
+        $dto = new UpdatePostDto(title: $title, body: $body, thumbnail_id: 1);
         $this->post_client->updatePost($this->post_id, $dto);
 
-        $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
-        header('Content-Type: application/json', true, 201);
-        echo json_encode(array('message' => 'Patch request succeeded', 'redirectUrl' => $redirect_url));
+        $redirect_header = sprintf('Location: %s', "http://localhost:8080/posts/" . $this->post_id);
+        header($redirect_header, true, 303);
     }
 
     public static function validatePost(string $title, string $body): array

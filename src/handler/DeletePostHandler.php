@@ -13,8 +13,6 @@ class DeletePostHandler
     {
         $this->post_client->deletePost($this->post_id);
 
-        $redirect_url = "http://localhost:8080/";
-        header('Content-Type: application/json');
-        echo json_encode(array('message' => 'Delete request succeeded', 'redirectUrl' => $redirect_url));
+        header("Location: http://localhost:8080", true, 303);
     }
 }

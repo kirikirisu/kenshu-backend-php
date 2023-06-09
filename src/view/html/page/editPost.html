@@ -5,45 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>kenshu-backend-php</title>
 	<script src="https://cdn.tailwindcss.com"></script>
-	<script>
-		async function updatePost(doc) {
-			try {
-				const title = doc.getElementById("post-title").value;
-				const body = doc.getElementById("post-body").value;
-
-				const pathList = location.pathname.split("/");
-				const postId = pathList[pathList.length - 2];
-				const url = `http://localhost:8080/posts/${postId}/edit`;
-				const bodyData = {
-					postId,
-					title,
-					body,
-					thumbnail_id: 1,
-				}
-
-				const res = await fetch(url, {
-					method: "PATCH",
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify(bodyData)
-				});
-
-				// 必要であればフィールドにエラー文表示
-				if (res.status === 400) console.log(await res.json())
-
-				window.location.replace((await res.json()).redirectUrl);
-
-			} catch (e) {
-				console.log("error:", e)
-			}
-		}
-	</script>
 </head>
 <body class="mx-auto max-w-4xl">
 <header class="mt-5 mb-10">
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
-	<form class="w-2/5" onsubmit="updatePost(document)">
+	<form class="w-2/5" method="post">
 		<label for="post-title" class="block text-base font-semibold"
 		>タイトル</label
 		>
@@ -76,6 +44,7 @@
 			</div>
 		</div>
 		%invalid_body%
+		<input hidden id="_method" name="_method" value="PATCH" />
 		<button
 				type="submit"
 				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"

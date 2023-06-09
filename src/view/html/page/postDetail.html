@@ -6,26 +6,19 @@
 	<title>kenshu-backend-php</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<script>
-		async function getPostEditPage() {
-			const pathList = location.pathname.split("/");
-			const postId = pathList[pathList.length - 1];
-			const url = `http://localhost:8080/posts/${postId}/edit`;
+		const pathList = location.pathname.split("/");
+		const postId = pathList[pathList.length - 1];
+		const url = `http://localhost:8080/posts/${postId}/edit`;
 
+		window.addEventListener('DOMContentLoaded', () => {
+			const form = document.querySelector("form");
+			form.action = url;
+		})
+
+		const getPostEditPage = async () => {
 			window.location.replace(url);
 		}
 
-		async function deletePost() {
-			const pathList = location.pathname.split("/");
-			const postId = pathList[pathList.length - 1];
-			const url = `http://localhost:8080/posts/${postId}/edit`;
-
-			const res = await (await fetch(url, {
-				method: "DELETE",
-				headers: {'Content-Type': 'application/json'},
-			})).json()
-
-			window.location.replace(res.redirectUrl);
-		}
 	</script>
 </head>
 <body class="mx-auto max-w-4xl">
@@ -36,7 +29,10 @@
 	<h2>%title%</h2>
 	<p>%body%</p>
 	<button onclick="getPostEditPage()">編集</button>
-	<button onclick="deletePost()">削除</button>
+	<form method="post" action="">
+		<input hidden id="_method" name="_method" value="DELETE"/>
+		<button type="submit">削除</button>
+	</form>
 </main>
 </body>
 </html>
