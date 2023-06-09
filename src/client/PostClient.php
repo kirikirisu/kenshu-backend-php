@@ -1,6 +1,7 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
-require_once(dirname(__DIR__, 1) . "/model/Post.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/UpdatePostDto.php");
+require_once(dirname(__DIR__, 1) . "/model/dto/ShowPostDto.php");
 require_once(dirname(__DIR__, 1) . "/lib/Singleton/PgConnect.php");
 
 class PostClient
@@ -12,7 +13,7 @@ class PostClient
     }
 
     /**
-     * @return Post[]
+     * @return ShowPostDto[]
      */
     public function getPostList(): array
     {
@@ -22,15 +23,21 @@ class PostClient
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
-            $post_list[] = new Post(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
         }
 
         return $post_list;
     }
 
-    public function getPostById()
+    public function getPostById(int $id): ShowPostDto
     {
+        $query = "SELECT * from posts WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $id);
+        $stmt->execute();
+        $raw_post = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
 
+        return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
     }
 
     public function createPost(IndexPostDto $payload): void
@@ -41,6 +48,25 @@ class PostClient
         $stmt->bindParam(":title", $payload->title);
         $stmt->bindParam(":body", $payload->body);
         $stmt->bindParam(":thumbnail_id", $payload->thumbnail_id);
+        $stmt->execute();
+    }
+
+    public function updatePost(int $post_id, UpdatePostDto $dto): void
+    {
+        $query = "UPDATE posts SET title = :title, body = :body, thumbnail_id = :thumbnail_id WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $post_id);
+        $stmt->bindParam(":title", $dto->title);
+        $stmt->bindParam(":body", $dto->body);
+        $stmt->bindParam(":thumbnail_id", $dto->thumbnail_id);
+        $stmt->execute();
+    }
+
+    public function deletePost(string $post_id): void
+    {
+        $query = "DELETE FROM posts WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $post_id);
         $stmt->execute();
     }
 }

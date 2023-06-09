@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>kenshu-backend-php</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		async function getPostEditPage() {
+			const pathList = location.pathname.split("/");
+			const postId = pathList[pathList.length - 1];
+			const url = `http://localhost:8080/posts/${postId}/edit`;
+
+			window.location.replace(url);
+		}
+
+		async function deletePost() {
+			const pathList = location.pathname.split("/");
+			const postId = pathList[pathList.length - 1];
+			const url = `http://localhost:8080/posts/${postId}/edit`;
+
+			const res = await (await fetch(url, {
+				method: "DELETE",
+				headers: {'Content-Type': 'application/json'},
+			})).json()
+
+			window.location.replace(res.redirectUrl);
+		}
+	</script>
+</head>
+<body class="mx-auto max-w-4xl">
+<header class="mt-5 mb-10">
+	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
+</header>
+<main>
+	<h2>%title%</h2>
+	<p>%body%</p>
+	<button onclick="getPostEditPage()">編集</button>
+	<button onclick="deletePost()">削除</button>
+</main>
+</body>
+</html>

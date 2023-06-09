@@ -1,39 +1,30 @@
 <?php
 require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
-require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
 require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
-require_once (dirname(__DIR__, 1)) . "/lib/Errors/InputError.php";
+require_once(dirname(__DIR__, 1). "/lib/Http/Request.php");
 
-class PostHandler
+class CreatePostHandler
 {
-    public static function getPostListPage(PageComposer $compose): void
+    public function __construct(
+        public PageComposer $compose,
+        public PostClient $post_client)
     {
-        $post_client = new PostClient();
-        $post_list = $post_client->getPostList();
-
-        $compose->topPage($post_list)->renderHTML();
     }
 
-    public static function createPost(PageComposer $compose): void
+    public function run()
     {
         $title = $_POST['post-title'];
         $body = $_POST['post-body'];
 
         $error_list = static::validatePost(title: $title, body: $body);
-
-        $post_client = new PostClient();
-        if (count($error_list) > 0) {
-            $post_list = $post_client->getPostList();
-
-            $compose->topPage($post_list, $error_list)->renderHTML();
-            exit;
-        }
+        if (count($error_list) > 0) static::renderTopPageWithError($this->compose, $error_list);
 
         $payload = new IndexPostDto(2, $title, $body, 1);
-        $post_client->createPost($payload);
+        $this->post_client->createPost($payload);
 
         header("Location: http://localhost:8080", true, 303);
     }
+
 
     public static function validatePost(string $title, string $body): array
     {
@@ -48,5 +39,18 @@ class PostHandler
         }
 
         return $error_list;
+    }
+
+    /**
+     * @param PageComposer $compose
+     * @param InputError[] $error_list
+     */
+    public static function renderTopPageWithError(PageComposer $compose, array $error_list)
+    {
+        $post_client = new PostClient();
+        $post_list = $post_client->getPostList();
+
+        $compose->topPage($post_list, $error_list)->renderHTML();
+        exit;
     }
 }
