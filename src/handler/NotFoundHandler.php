@@ -1,5 +1,8 @@
 <?php
+namespace App\Handler;
+
 require_once(dirname(__DIR__) . "/lib/Http/Response.php");
+use App\Lib\Http\Response;
 
 class NotFoundHandler
 {

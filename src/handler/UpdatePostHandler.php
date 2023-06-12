@@ -1,7 +1,14 @@
 <?php
-require_once(dirname(__DIR__) . "/lib/Http/Response.php");
-require_once(dirname(__DIR__) . "/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/lib/Validator/ValidatePost.php");
+namespace App\Handler;
+
+use App\Lib\Http\Response;
+use App\Lib\Http\Request;
+use App\Lib\Validator\ValidatePost;
+use App\Model\Dto\UpdatePostDto;
+use App\Model\Dto\ShowPostDto;
+use App\Lib\PageComposer;
+use App\Lib\Errors\InputError;
+use App\Client\PostClient;
 
 class UpdatePostHandler
 {

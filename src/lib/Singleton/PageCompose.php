@@ -1,5 +1,7 @@
 <?php
-require_once(dirname(__DIR__)."/PageComposer.php");
+namespace App\Lib\Singleton;
+
+use App\Lib\PageComposer;
 
 class PageCompose {
     public static  PageComposer|null $composer = null;

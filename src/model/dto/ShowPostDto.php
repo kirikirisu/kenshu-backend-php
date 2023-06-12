@@ -1,4 +1,5 @@
 <?php
+namespace App\Model\Dto;
 
 class ShowPostDto
 {

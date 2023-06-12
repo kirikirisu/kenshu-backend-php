@@ -1,5 +1,9 @@
 <?php
-require_once(dirname(__DIR__) . "/lib/Http/Response.php");
+namespace App\Handler;
+
+use App\Lib\Http\Response;
+use App\Lib\PageComposer;
+use App\Client\PostClient;
 
 class GetPostDetailPageHandler
 {

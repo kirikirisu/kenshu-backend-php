@@ -1,14 +1,18 @@
 <?php
-require_once(dirname(__DIR__) . "/src/client/PostClient.php");
-require_once(dirname(__DIR__) . "/src/lib/Singleton/PageCompose.php");
-require_once(dirname(__DIR__) . "/src/handler/GetTopPageHandler.php");
-require_once(dirname(__DIR__) . "/src/handler/CreatePostHandler.php");
-require_once(dirname(__DIR__) . "/src/handler/GetPostDetailPageHandler.php");
-require_once(dirname(__DIR__) . "/src/handler/GetPostEditPageHandler.php");
-require_once(dirname(__DIR__) . "/src/handler/UpdatePostHandler.php");
-require_once(dirname(__DIR__) . "/src/handler/DeletePostHandler.php");
-require_once(dirname(__DIR__) . "/src/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/src/handler/NotFoundHandler.php");
+
+namespace App;
+
+use App\Client\PostClient;
+use App\Handler\CreatePostHandler;
+use App\Handler\DeletePostHandler;
+use App\Handler\GetPostDetailPageHandler;
+use App\Handler\GetPostEditPageHandler;
+use App\Handler\GetTopPageHandler;
+use App\Handler\NotFoundHandler;
+use App\Handler\UpdatePostHandler;
+use App\Lib\Http\Request;
+use App\Lib\Singleton\PageCompose;
+
 
 class Route
 {

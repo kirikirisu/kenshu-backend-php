@@ -1,10 +1,13 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
-require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
-require_once(dirname(__DIR__, 1). "/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/lib/Http/Response.php");
-require_once(dirname(__DIR__) . "/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/lib/Validator/ValidatePost.php");
+namespace App\Handler;
+
+use App\Client\PostClient;
+use App\Lib\PageComposer;
+use App\Lib\Http\Request;
+use App\Lib\Http\Response;
+use App\Lib\Validator\ValidatePost;
+use App\Model\Dto\IndexPostDto;
+use App\Lib\Errors\InputError;
 
 class CreatePostHandler
 {

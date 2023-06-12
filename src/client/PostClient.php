@@ -1,13 +1,15 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/model/dto/IndexPostDto.php");
-require_once(dirname(__DIR__, 1) . "/model/dto/UpdatePostDto.php");
-require_once(dirname(__DIR__, 1) . "/model/dto/ShowPostDto.php");
-require_once(dirname(__DIR__, 1) . "/lib/Singleton/PgConnect.php");
+namespace App\Client;
+
+use App\Model\Dto\IndexPostDto;
+use App\Model\Dto\ShowPostDto;
+use App\Model\Dto\UpdatePostDto;
+use App\Lib\Singleton\PgConnect;
 
 class PostClient
 {
     public function __construct(
-        public ?PDO $pdo = null)
+        public ?\PDO $pdo = null)
     {
         if (is_null($pdo)) $this->pdo = PgConnect::getClient();
     }
@@ -19,7 +21,7 @@ class PostClient
     {
         $query = "SELECT * from posts ORDER BY id DESC";
         $res = $this->pdo->query($query);
-        $raw_post_list = $res->fetchAll(PDO::FETCH_ASSOC);
+        $raw_post_list = $res->fetchAll(\PDO::FETCH_ASSOC);
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
@@ -35,7 +37,7 @@ class PostClient
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
-        $raw_post = $stmt->fetchAll(PDO::FETCH_ASSOC)[0];
+        $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
         return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
     }

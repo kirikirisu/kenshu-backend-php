@@ -1,8 +1,9 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/client/PostClient.php");
-require_once(dirname(__DIR__, 1) . "/lib/PageComposer.php");
-require_once(dirname(__DIR__) . "/client/PostClient.php");
-require_once(dirname(__DIR__) . "/lib/Http/Response.php");
+namespace App\Handler;
+
+use App\Client\PostClient;
+use App\Lib\PageComposer;
+use App\Lib\Http\Response;
 
 class GetTopPageHandler
 {

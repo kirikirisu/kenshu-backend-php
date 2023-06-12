@@ -1,6 +1,8 @@
 <?php
-require_once(dirname(__DIR__, 1) . "/model/dto/ShowPostDto.php");
-require_once(dirname(__DIR__, 1) . "/lib/Errors/InputError.php");
+namespace App\Lib;
+
+use App\Lib\Errors\InputError;
+use App\Model\Dto\ShowPostDto;
 
 class PageComposer
 {
