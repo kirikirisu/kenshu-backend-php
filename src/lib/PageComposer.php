@@ -64,9 +64,4 @@ class PageComposer
     {
         return $this->page;
     }
-
-    public function renderHTML(): void
-    {
-        echo $this->page;
-    }
 }
