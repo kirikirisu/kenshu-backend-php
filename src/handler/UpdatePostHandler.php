@@ -29,6 +29,11 @@ class UpdatePostHandler
         return new Response(status_code: 303, redirect_url: $redirect_url);
     }
 
+    /**
+     * @param PageComposer $compose
+     * @param ShowPostDto $post
+     * @param InputError[] $error_list
+     */
     public static function createEditPageWithError(PageComposer $compose, ShowPostDto $post, array $error_list): Response
     {
         $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
