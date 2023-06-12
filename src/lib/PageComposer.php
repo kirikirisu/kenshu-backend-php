@@ -49,11 +49,22 @@ class PageComposer
         return $this;
     }
 
-    public function getPostEditPage(ShowPostDto $post): self
+    public function postEditPage(ShowPostDto $post, array $error_list = null): self
     {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
         $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
+
+        if ($error_list) {
+            foreach ($error_list as $error) {
+                if ($error->field === "title") {
+                    $this->page = str_replace("%invalid_title%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
+                }
+                if ($error->field === "body") {
+                    $this->page = str_replace("%invalid_body%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
+                }
+            }
+        }
 
         $this->page = str_replace("%invalid_title%", "", $this->page);
         $this->page = str_replace("%invalid_body%", "", $this->page);
