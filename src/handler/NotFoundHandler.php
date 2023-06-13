@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
-class Handle404
+class NotFoundHandler
 {
     public function run(): Response
     {
