@@ -2,16 +2,16 @@
 
 namespace App\Handler;
 
-use App\Client\PostClient;
+use App\Client\PostRepository;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Response;
 
 class GetPostDetailPageHandler implements HandlerInterface
 {
     public function __construct(
-        public int         $post_id,
-        public HTMLBuilder $compose,
-        public PostClient  $post_client)
+        public int            $post_id,
+        public HTMLBuilder    $compose,
+        public PostRepository $post_client)
     {
     }
 

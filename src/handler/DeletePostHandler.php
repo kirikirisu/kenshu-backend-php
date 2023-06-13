@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Handler;
 
-use App\Client\PostClient;
+use App\Client\PostRepository;
 use App\Lib\Http\Response;
 
 class DeletePostHandler implements HandlerInterface
 {
     public function __construct(
-        public int $post_id,
-        public PostClient $post_client)
+        public int            $post_id,
+        public PostRepository $post_client)
     {
     }
 

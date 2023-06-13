@@ -2,7 +2,7 @@
 
 namespace App\Handler;
 
-use App\Client\PostClient;
+use App\Client\PostRepository;
 use App\Lib\Errors\InputError;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
@@ -15,10 +15,10 @@ class UpdatePostHandler implements HandlerInterface
 {
 
     public function __construct(
-        public Request     $req,
-        public int         $post_id,
-        public HTMLBuilder $compose,
-        public PostClient  $post_client)
+        public Request        $req,
+        public int            $post_id,
+        public HTMLBuilder    $compose,
+        public PostRepository $post_client)
     {
     }
 

@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Client;
 
+use App\Lib\Singleton\PgConnect;
 use App\Model\Dto\IndexPostDto;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
-use App\Lib\Singleton\PgConnect;
 
-class PostClient implements PostClientInterface
+class PostRepository implements PostRepositoryInterface
 {
     public function __construct(
         public ?\PDO $pdo = null)

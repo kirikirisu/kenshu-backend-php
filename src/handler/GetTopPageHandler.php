@@ -2,15 +2,15 @@
 
 namespace App\Handler;
 
-use App\Client\PostClient;
+use App\Client\PostRepository;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Response;
 
 class GetTopPageHandler implements HandlerInterface
 {
     public function __construct(
-        public HTMLBuilder $compose,
-        public PostClient  $post_client)
+        public HTMLBuilder    $compose,
+        public PostRepository $post_client)
     {
     }
 
