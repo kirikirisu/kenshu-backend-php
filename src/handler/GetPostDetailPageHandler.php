@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class GetPostDetailPageHandler
 {
@@ -9,10 +10,11 @@ class GetPostDetailPageHandler
     {
     }
 
-    public function run()
+    public function run(): Response
     {
         $post = $this->post_client->getPostById($this->post_id);
 
-        $this->compose->postDetailPage($post)->renderHTML();
+        $html = $this->compose->postDetailPage($post)->getHtml();
+        return new Response(status_code: OK, html: $html);
     }
 }

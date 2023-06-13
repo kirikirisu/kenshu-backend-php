@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
 
 class GetPostEditPageHandler
 {
@@ -14,6 +15,8 @@ class GetPostEditPageHandler
     {
         $post = $this->post_client->getPostById(id: $this->post_id);
 
-        $this->compose->getPostEditPage(post: $post)->renderHTML();
+        $html = $this->compose->postEditPage(post: $post)->getHtml();
+
+        return new Response(status_code: OK, html: $html);
     }
 }

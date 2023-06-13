@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__) . "/src/setup.php");
 require_once(dirname(__DIR__) . "/src/Route.php");
 require_once(dirname(__DIR__) . "/src/lib/Http/Request.php");
 require_once(dirname(__DIR__) . "/src/lib/Singleton/PageCompose.php");
@@ -8,11 +9,19 @@ class App
 {
     public function run()
     {
-        $handler = Route::getHandler($_SERVER['REQUEST_METHOD'], $_SERVER['REQUEST_URI']);
-        $handler->run();
+        $request_method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
-//        http_response_code($res['status_code']);
-//        header('Content-Type: text/html; charset=utf-8');
-//        echo $res['body'];
+        $req = new Request(method: $request_method, path: $_SERVER['REQUEST_URI'], post: $_POST);
+        $handler = Route::getHandler(req: $req);
+        $res = $handler->run();
+
+        if (is_null($res->html)) {
+            $redirect_header = sprintf('Location: %s', $res->redirect_url);
+            header($redirect_header, true, $res->status_code);
+        }
+
+        http_response_code($res->status_code);
+        header('Content-Type: text/html; charset=utf-8');
+        echo $res->html;
     }
 }

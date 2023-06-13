@@ -1,46 +1,44 @@
 <?php
+require_once(dirname(__DIR__) . "/lib/Http/Response.php");
+require_once(dirname(__DIR__) . "/lib/Http/Request.php");
+require_once(dirname(__DIR__) . "/lib/Validator/ValidatePost.php");
 
 class UpdatePostHandler
 {
 
     public function __construct(
+        public Request      $req,
         public int          $post_id,
+        public PageComposer $compose,
         public PostClient   $post_client)
     {
     }
 
-    public function run()
+    public function run(): Response
     {
-        $body = file_get_contents('php://input');
-        $data = json_decode($body);
+        $title = $this->req->post['post-title'];
+        $body = $this->req->post['post-body'];
 
-        $error_list = static::validatePost(title: $data->title, body: $data->body);
-        if (count($error_list) > 0) {
-            header('Content-Type: application/json', true, 400);
-            echo json_encode(array('message' => 'Patch request faild', 'errorMessage' => $error_list));
-            exit;
-        }
+        $error_list = ValidatePost::exec(title: $title, body: $body);
+        if (count($error_list) > 0) return static::createEditPageWithError(compose: $this->compose, post: new ShowPostDto(id: $this->post_id, user_id: 2, title: $title, body: $body, thumbnail_id: 1), error_list: $error_list);
 
-        $dto = new UpdatePostDto(title: $data->title, body: $data->body, thumbnail_id: 1);
+        $dto = new UpdatePostDto(title: $title, body: $body, thumbnail_id: 1);
         $this->post_client->updatePost($this->post_id, $dto);
 
         $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
-        header('Content-Type: application/json', true, 201);
-        echo json_encode(array('message' => 'Patch request succeeded', 'redirectUrl' => $redirect_url));
+        return new Response(status_code: SEE_OTHER, redirect_url: $redirect_url);
     }
 
-    public static function validatePost(string $title, string $body): array
+    /**
+     * @param PageComposer $compose
+     * @param ShowPostDto $post
+     * @param InputError[] $error_list
+     */
+    public static function createEditPageWithError(PageComposer $compose, ShowPostDto $post, array $error_list): Response
     {
-        /** @var InputError[] $error_list */
-        $error_list = [];
+        $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
 
-        if ($title === "") {
-            $error_list[] = new InputError("タイトルを入力してください。", "title");
-        }
-        if ($body === "") {
-            $error_list[] = new InputError("本文を入力してください。", "body");
-        }
-
-        return $error_list;
+        return new Response(status_code: OK, html: $html);
     }
+
 }

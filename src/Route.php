@@ -7,35 +7,36 @@ require_once(dirname(__DIR__) . "/src/handler/GetPostDetailPageHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/GetPostEditPageHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/UpdatePostHandler.php");
 require_once(dirname(__DIR__) . "/src/handler/DeletePostHandler.php");
+require_once(dirname(__DIR__) . "/src/lib/Http/Request.php");
+require_once(dirname(__DIR__) . "/src/handler/NotFoundHandler.php");
 
 class Route
 {
-    public static function getHandler(string $request_method, string $request_url)
+    public static function getHandler(Request $req)
     {
-        if ($request_method === "GET" && $request_url === "/") {
+        if ($req->method === "GET" && $req->path === "/") {
             return new GetTopPageHandler(compose: PageCompose::getComposer(), post_client: new PostClient());
 
-        } else if ($request_method === "POST" && $request_url === "/") {
-            return new CreatePosthandler(compose: PageCompose::getComposer(), post_client: new PostClient());
+        } else if ($req->method === "POST" && $req->path === "/") {
+            return new CreatePosthandler(req: $req, compose: PageCompose::getComposer(), post_client: new PostClient());
 
-        } else if ($request_method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $request_url, $match)) {
+        } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
             return new GetPostDetailPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_client: new PostClient());
 
-        } else if ($request_method === "GET" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
+        } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
             return new GetPostEditPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_client: new PostClient());
 
-        } else if ($request_method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
+        } else if ($req->method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
-            return new UpdatePostHandler(post_id: $post_id, post_client: new PostClient());
+            return new UpdatePostHandler(req: $req, post_id: $post_id, compose: PageCompose::getComposer(), post_client: new PostClient());
 
-        } else if ($request_method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $request_url, $match)) {
+        } else if ($req->method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
             return new DeletePostHandler(post_id: $post_id, post_client: new PostClient());
 
         }
-
-        echo "<h1>Page Not Found.</h1>\n" . $request_url . $request_method;
+        return new NotFoundHandler();
     }
 }
