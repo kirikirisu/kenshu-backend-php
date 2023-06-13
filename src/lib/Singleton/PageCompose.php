@@ -1,14 +1,17 @@
 <?php
+
 namespace App\Lib\Singleton;
 
-use App\Lib\PageComposer;
+use App\Lib\HTMLBuilder;
 
-class PageCompose {
-    public static  PageComposer|null $composer = null;
+class PageCompose
+{
+    public static HTMLBuilder|null $composer = null;
 
-    public static function getComposer(): PageComposer {
+    public static function getComposer(): HTMLBuilder
+    {
         if (is_null(static::$composer)) {
-            static::$composer = new PageComposer();
+            static::$composer = new HTMLBuilder();
         }
 
         return static::$composer;

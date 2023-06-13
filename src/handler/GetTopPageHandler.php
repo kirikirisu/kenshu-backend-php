@@ -3,14 +3,14 @@
 namespace App\Handler;
 
 use App\Client\PostClient;
+use App\Lib\HTMLBuilder;
 use App\Lib\Http\Response;
-use App\Lib\PageComposer;
 
 class GetTopPageHandler implements HandlerInterface
 {
     public function __construct(
-        public PageComposer $compose,
-        public PostClient   $post_client)
+        public HTMLBuilder $compose,
+        public PostClient  $post_client)
     {
     }
 

@@ -1,16 +1,17 @@
 <?php
+
 namespace App\Handler;
 
-use App\Lib\Http\Response;
-use App\Lib\PageComposer;
 use App\Client\PostClient;
+use App\Lib\HTMLBuilder;
+use App\Lib\Http\Response;
 
 class GetPostEditPageHandler implements HandlerInterface
 {
     public function __construct(
-        public int          $post_id,
-        public PageComposer $compose,
-        public PostClient   $post_client)
+        public int         $post_id,
+        public HTMLBuilder $compose,
+        public PostClient  $post_client)
     {
 
     }

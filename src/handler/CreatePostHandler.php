@@ -1,20 +1,21 @@
 <?php
+
 namespace App\Handler;
 
 use App\Client\PostClient;
-use App\Lib\PageComposer;
+use App\Lib\Errors\InputError;
+use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\IndexPostDto;
-use App\Lib\Errors\InputError;
 
 class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
-        public Request $req,
-        public PageComposer $compose,
-        public PostClient $post_client)
+        public Request     $req,
+        public HTMLBuilder $compose,
+        public PostClient  $post_client)
     {
     }
 
@@ -33,10 +34,10 @@ class CreatePostHandler implements HandlerInterface
     }
 
     /**
-     * @param PageComposer $compose
+     * @param HTMLBuilder $compose
      * @param InputError[] $error_list
      */
-    public static function createTopPageWithError(PageComposer $compose, PostClient $post_client, array $error_list): Response
+    public static function createTopPageWithError(HTMLBuilder $compose, PostClient $post_client, array $error_list): Response
     {
         $post_list = $post_client->getPostList();
 

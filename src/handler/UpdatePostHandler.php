@@ -1,23 +1,24 @@
 <?php
+
 namespace App\Handler;
 
-use App\Lib\Http\Response;
-use App\Lib\Http\Request;
-use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\UpdatePostDto;
-use App\Model\Dto\ShowPostDto;
-use App\Lib\PageComposer;
-use App\Lib\Errors\InputError;
 use App\Client\PostClient;
+use App\Lib\Errors\InputError;
+use App\Lib\HTMLBuilder;
+use App\Lib\Http\Request;
+use App\Lib\Http\Response;
+use App\Lib\Validator\ValidatePost;
+use App\Model\Dto\ShowPostDto;
+use App\Model\Dto\UpdatePostDto;
 
 class UpdatePostHandler implements HandlerInterface
 {
 
     public function __construct(
-        public Request      $req,
-        public int          $post_id,
-        public PageComposer $compose,
-        public PostClient   $post_client)
+        public Request     $req,
+        public int         $post_id,
+        public HTMLBuilder $compose,
+        public PostClient  $post_client)
     {
     }
 
@@ -37,11 +38,11 @@ class UpdatePostHandler implements HandlerInterface
     }
 
     /**
-     * @param PageComposer $compose
+     * @param HTMLBuilder $compose
      * @param ShowPostDto $post
      * @param InputError[] $error_list
      */
-    public static function createEditPageWithError(PageComposer $compose, ShowPostDto $post, array $error_list): Response
+    public static function createEditPageWithError(HTMLBuilder $compose, ShowPostDto $post, array $error_list): Response
     {
         $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
 
