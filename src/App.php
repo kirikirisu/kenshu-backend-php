@@ -11,7 +11,7 @@ class App
         $request_method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 
         $req = new Request(method: $request_method, path: $_SERVER['REQUEST_URI'], post: $_POST);
-        $handler = Route::getHandler(req: $req, request_method: $request_method, request_url: $_SERVER['REQUEST_URI']);
+        $handler = Route::getHandler(req: $req);
         $res = $handler->run();
 
         if (is_null($res->html)) {
