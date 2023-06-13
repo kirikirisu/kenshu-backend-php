@@ -10,7 +10,7 @@ use App\Lib\PageComposer;
 use App\Lib\Errors\InputError;
 use App\Client\PostClient;
 
-class UpdatePostHandler
+class UpdatePostHandler implements HandlerInterface
 {
 
     public function __construct(

@@ -4,7 +4,7 @@ namespace App\Handler;
 use App\Client\PostClient;
 use App\Lib\Http\Response;
 
-class DeletePostHandler
+class DeletePostHandler implements HandlerInterface
 {
     public function __construct(
         public int $post_id,

@@ -5,7 +5,7 @@ use App\Lib\Http\Response;
 use App\Lib\PageComposer;
 use App\Client\PostClient;
 
-class GetPostEditPageHandler
+class GetPostEditPageHandler implements HandlerInterface
 {
     public function __construct(
         public int          $post_id,
@@ -15,7 +15,7 @@ class GetPostEditPageHandler
 
     }
 
-    public function run()
+    public function run(): Response
     {
         $post = $this->post_client->getPostById(id: $this->post_id);
 

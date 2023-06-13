@@ -5,7 +5,7 @@ use App\Lib\Http\Response;
 use App\Lib\PageComposer;
 use App\Client\PostClient;
 
-class GetPostDetailPageHandler
+class GetPostDetailPageHandler implements HandlerInterface
 {
     public function __construct(
         public int $post_id,

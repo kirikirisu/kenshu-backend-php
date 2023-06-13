@@ -1,15 +1,16 @@
 <?php
+
 namespace App\Handler;
 
 use App\Client\PostClient;
-use App\Lib\PageComposer;
 use App\Lib\Http\Response;
+use App\Lib\PageComposer;
 
-class GetTopPageHandler
+class GetTopPageHandler implements HandlerInterface
 {
     public function __construct(
         public PageComposer $compose,
-        public PostClient $post_client)
+        public PostClient   $post_client)
     {
     }
 

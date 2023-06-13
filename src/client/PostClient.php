@@ -6,7 +6,7 @@ use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
 use App\Lib\Singleton\PgConnect;
 
-class PostClient
+class PostClient implements PostClientInterface
 {
     public function __construct(
         public ?\PDO $pdo = null)
@@ -64,7 +64,7 @@ class PostClient
         $stmt->execute();
     }
 
-    public function deletePost(string $post_id): void
+    public function deletePost(int $post_id): void
     {
         $query = "DELETE FROM posts WHERE id = :id";
         $stmt = $this->pdo->prepare($query);

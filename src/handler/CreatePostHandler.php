@@ -9,7 +9,7 @@ use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\IndexPostDto;
 use App\Lib\Errors\InputError;
 
-class CreatePostHandler
+class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
         public Request $req,
@@ -29,7 +29,7 @@ class CreatePostHandler
         $payload = new IndexPostDto(2, $title, $body, 1);
         $this->post_client->createPost($payload);
 
-        return new Response(status_code: SEE_OTHER, redirect_url: "http://localhost:8080");
+        return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: "http://localhost:8080");
     }
 
     /**

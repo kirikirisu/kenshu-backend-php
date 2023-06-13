@@ -8,6 +8,7 @@ use App\Handler\DeletePostHandler;
 use App\Handler\GetPostDetailPageHandler;
 use App\Handler\GetPostEditPageHandler;
 use App\Handler\GetTopPageHandler;
+use App\handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
 use App\Handler\UpdatePostHandler;
 use App\Lib\Http\Request;
@@ -16,7 +17,7 @@ use App\Lib\Singleton\PageCompose;
 
 class Route
 {
-    public static function getHandler(Request $req)
+    public static function getHandler(Request $req): HandlerInterface
     {
         if ($req->method === "GET" && $req->path === "/") {
             return new GetTopPageHandler(compose: PageCompose::getComposer(), post_client: new PostClient());
