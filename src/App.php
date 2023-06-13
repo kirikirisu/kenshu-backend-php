@@ -1,4 +1,5 @@
 <?php
+require_once(dirname(__DIR__) . "/src/setup.php");
 require_once(dirname(__DIR__) . "/src/Route.php");
 require_once(dirname(__DIR__) . "/src/lib/Http/Request.php");
 require_once(dirname(__DIR__) . "/src/lib/Singleton/PageCompose.php");

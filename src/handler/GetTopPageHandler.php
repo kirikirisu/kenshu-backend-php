@@ -18,6 +18,6 @@ class GetTopPageHandler
 
         $html = $this->compose->topPage($post_list)->getHtml();
 
-        return new Response(status_code: 200, html: $html);
+        return new Response(status_code: OK, html: $html);
     }
 }

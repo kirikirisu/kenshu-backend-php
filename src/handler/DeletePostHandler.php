@@ -14,6 +14,6 @@ class DeletePostHandler
     {
         $this->post_client->deletePost($this->post_id);
 
-        return new Response(status_code: 303, redirect_url: "http://localhost:8080");
+        return new Response(status_code: SEE_OTHER, redirect_url: "http://localhost:8080");
     }
 }

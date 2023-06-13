@@ -26,7 +26,7 @@ class CreatePostHandler
         $payload = new IndexPostDto(2, $title, $body, 1);
         $this->post_client->createPost($payload);
 
-        return new Response(status_code: 303, redirect_url: "http://localhost:8080");
+        return new Response(status_code: SEE_OTHER, redirect_url: "http://localhost:8080");
     }
 
     /**
@@ -38,6 +38,6 @@ class CreatePostHandler
         $post_list = $post_client->getPostList();
 
         $html = $compose->topPage($post_list, $error_list)->getHtml();
-        return new Response(status_code: 200, html: $html);
+        return new Response(status_code: OK, html: $html);
     }
 }

@@ -5,6 +5,6 @@ class NotFoundHandler
 {
     public function run(): Response
     {
-        return new Response(status_code: 404, html: "<h1>Page not found.</h1>");
+        return new Response(status_code: NOT_FOUND, html: "<h1>Page not found.</h1>");
     }
 }

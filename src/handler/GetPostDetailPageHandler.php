@@ -15,6 +15,6 @@ class GetPostDetailPageHandler
         $post = $this->post_client->getPostById($this->post_id);
 
         $html = $this->compose->postDetailPage($post)->getHtml();
-        return new Response(status_code: 200, html: $html);
+        return new Response(status_code: OK, html: $html);
     }
 }
