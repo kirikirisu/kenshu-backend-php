@@ -1,6 +1,6 @@
 <?php
 
-namespace App\client;
+namespace App\Repository;
 
 use App\Model\Dto\IndexPostDto;
 use App\Model\Dto\ShowPostDto;

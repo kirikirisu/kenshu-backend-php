@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Client;
+namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
 use App\Model\Dto\IndexPostDto;

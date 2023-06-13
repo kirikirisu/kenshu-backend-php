@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Client\PostRepository;
+use App\Repository\PostRepository;
 use App\Handler\CreatePostHandler;
 use App\Handler\DeletePostHandler;
 use App\Handler\GetPostDetailPageHandler;

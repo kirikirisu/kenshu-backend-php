@@ -2,7 +2,7 @@
 
 namespace App\Handler;
 
-use App\Client\PostRepository;
+use App\Repository\PostRepository;
 use App\Lib\Http\Response;
 
 class DeletePostHandler implements HandlerInterface
