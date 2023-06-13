@@ -21,6 +21,6 @@ class GetPostEditPageHandler
 
         $html = $this->compose->postEditPage(post: $post)->getHtml();
 
-        return new Response(status_code: OK, html: $html);
+        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 }

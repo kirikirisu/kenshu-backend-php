@@ -33,7 +33,7 @@ class UpdatePostHandler
         $this->post_client->updatePost($this->post_id, $dto);
 
         $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
-        return new Response(status_code: SEE_OTHER, redirect_url: $redirect_url);
+        return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
     }
 
     /**
@@ -45,7 +45,7 @@ class UpdatePostHandler
     {
         $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
 
-        return new Response(status_code: OK, html: $html);
+        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 
 }

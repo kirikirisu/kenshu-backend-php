@@ -41,6 +41,6 @@ class CreatePostHandler
         $post_list = $post_client->getPostList();
 
         $html = $compose->topPage($post_list, $error_list)->getHtml();
-        return new Response(status_code: OK, html: $html);
+        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 }

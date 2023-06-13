@@ -8,6 +8,6 @@ class NotFoundHandler
 {
     public function run(): Response
     {
-        return new Response(status_code: NOT_FOUND, html: "<h1>Page not found.</h1>");
+        return new Response(status_code: NOT_FOUND_STATUS_CODE, html: "<h1>Page not found.</h1>");
     }
 }
