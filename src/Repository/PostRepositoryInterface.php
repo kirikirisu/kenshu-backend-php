@@ -13,7 +13,7 @@ interface PostRepositoryInterface
 
     public function getPostById(int $id): ShowPostDto;
 
-    public function createPost(IndexPostDto $payload): void;
+    public function createPost(IndexPostDto $payload): int;
 
     public function updatePost(int $post_id, UpdatePostDto $dto): void;
 

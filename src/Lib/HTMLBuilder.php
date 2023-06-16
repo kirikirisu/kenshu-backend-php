@@ -35,11 +35,15 @@ class HTMLBuilder
                 if ($error->field === "body") {
                     $this->page = str_replace("%invalid_body%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
                 }
+                if ($error->field === "image") {
+                    $this->page = str_replace("%invalid_image%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
+                }
             }
         }
 
         $this->page = str_replace("%invalid_title%", "", $this->page);
         $this->page = str_replace("%invalid_body%", "", $this->page);
+        $this->page = str_replace("%invalid_image%", "", $this->page);
         return $this;
     }
 
