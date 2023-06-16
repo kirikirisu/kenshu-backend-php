@@ -2,8 +2,6 @@
 
 namespace App\Handler;
 
-require_once(dirname(__DIR__) . "/Lib/Http/Response.php");
-
 use App\Lib\Http\Response;
 
 class NotFoundHandler implements HandlerInterface

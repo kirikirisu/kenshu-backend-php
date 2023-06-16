@@ -8,7 +8,7 @@ use App\Handler\DeletePostHandler;
 use App\Handler\GetPostDetailPageHandler;
 use App\Handler\GetPostEditPageHandler;
 use App\Handler\GetTopPageHandler;
-use App\handler\HandlerInterface;
+use App\Handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
 use App\Handler\UpdatePostHandler;
 use App\Lib\Http\Request;
