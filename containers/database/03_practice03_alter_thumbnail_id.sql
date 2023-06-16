@@ -1,0 +1,1 @@
+ALTER TABLE posts ALTER COLUMN thumbnail_id TYPE VARCHAR(10000);
