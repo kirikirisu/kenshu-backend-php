@@ -1,10 +1,11 @@
 <?php
+namespace App\Lib\Singleton;
 
 class PgConnect
 {
-    public static PDO|null $client = null;
+    public static \PDO|null $client = null;
 
-    public static function getClient(): PDO
+    public static function getClient(): \PDO
     {
         if (is_null(static::$client)) {
             $db_name = getenv("DB_NAME");
@@ -14,7 +15,7 @@ class PgConnect
             $password = getenv("DB_PASSWORD");
             $dsn = "pgsql:dbname=" . $db_name . " " . "host=" . $host . " " . "port=" . $port;
 
-            static::$client = new PDO($dsn, $user, $password, array(PDO::ATTR_PERSISTENT => true));
+            static::$client = new \PDO($dsn, $user, $password, array(\PDO::ATTR_PERSISTENT => true));
         }
         return static::$client;
     }

@@ -1,9 +1,9 @@
 <?php
+require_once(dirname(__DIR__) . "/src/vendor/autoload.php");
 require_once(dirname(__DIR__) . "/src/setup.php");
-require_once(dirname(__DIR__) . "/src/Route.php");
-require_once(dirname(__DIR__) . "/src/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/src/lib/Singleton/PageCompose.php");
-require_once(dirname(__DIR__) . "/src/client/PostClient.php");
+
+use App\Lib\Http\Request;
+use App\Route;
 
 class App
 {

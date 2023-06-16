@@ -1,6 +1,6 @@
 <?php
-const OK = 200;
-const Created = 201;
-const SEE_OTHER = 303;
+const OK_STATUS_CODE = 200;
+const SEE_OTHER_STATUS_CODE = 303;
 const UNAUTHORIZED = 401;
-const NOT_FOUND = 404;
+const NOT_FOUND_STATUS_CODE = 404;
+

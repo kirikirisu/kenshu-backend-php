@@ -1,5 +1,7 @@
 <?php
-require_once(dirname(__DIR__, 1). "/Errors/InputError.php");
+namespace App\Lib\Validator;
+
+use App\Lib\Errors\InputError;
 
 class ValidatePost
 {

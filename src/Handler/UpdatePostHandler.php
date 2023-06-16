@@ -1,16 +1,24 @@
 <?php
-require_once(dirname(__DIR__) . "/lib/Http/Response.php");
-require_once(dirname(__DIR__) . "/lib/Http/Request.php");
-require_once(dirname(__DIR__) . "/lib/Validator/ValidatePost.php");
 
-class UpdatePostHandler
+namespace App\Handler;
+
+use App\Repository\PostRepository;
+use App\Lib\Errors\InputError;
+use App\Lib\HTMLBuilder;
+use App\Lib\Http\Request;
+use App\Lib\Http\Response;
+use App\Lib\Validator\ValidatePost;
+use App\Model\Dto\ShowPostDto;
+use App\Model\Dto\UpdatePostDto;
+
+class UpdatePostHandler implements HandlerInterface
 {
 
     public function __construct(
-        public Request      $req,
-        public int          $post_id,
-        public PageComposer $compose,
-        public PostClient   $post_client)
+        public Request        $req,
+        public int            $post_id,
+        public HTMLBuilder    $compose,
+        public PostRepository $post_client)
     {
     }
 
@@ -26,19 +34,19 @@ class UpdatePostHandler
         $this->post_client->updatePost($this->post_id, $dto);
 
         $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
-        return new Response(status_code: SEE_OTHER, redirect_url: $redirect_url);
+        return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
     }
 
     /**
-     * @param PageComposer $compose
+     * @param HTMLBuilder $compose
      * @param ShowPostDto $post
      * @param InputError[] $error_list
      */
-    public static function createEditPageWithError(PageComposer $compose, ShowPostDto $post, array $error_list): Response
+    public static function createEditPageWithError(HTMLBuilder $compose, ShowPostDto $post, array $error_list): Response
     {
         $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
 
-        return new Response(status_code: OK, html: $html);
+        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 
 }

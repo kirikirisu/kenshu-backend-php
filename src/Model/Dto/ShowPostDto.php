@@ -1,8 +1,10 @@
 <?php
+namespace App\Model\Dto;
 
-class IndexPostDto
+class ShowPostDto
 {
     public function __construct(
+        public int    $id,
         public int    $user_id,
         public string $title,
         public string $body,
