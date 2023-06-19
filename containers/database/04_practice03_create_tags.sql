@@ -1,0 +1,11 @@
+INSERT INTO tags (name) VALUES ('総合');
+INSERT INTO tags (name) VALUES ('テクノロジー');
+INSERT INTO tags (name) VALUES ('モバイル');
+INSERT INTO tags (name) VALUES ('アプリ');
+INSERT INTO tags (name) VALUES ('エンタメ');
+INSERT INTO tags (name) VALUES ('ビューティー');
+INSERT INTO tags (name) VALUES ('ファッション');
+INSERT INTO tags (name) VALUES ('ライフスタイル');
+INSERT INTO tags (name) VALUES ('ビジネス');
+INSERT INTO tags (name) VALUES ('グルメ');
+INSERT INTO tags (name) VALUES ('スポーツ');
