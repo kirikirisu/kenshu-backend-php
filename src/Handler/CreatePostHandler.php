@@ -2,14 +2,15 @@
 
 namespace App\Handler;
 
-use App\Lib\Errors\InputError;
+use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\IndexPostDto;
 use App\Repository\ImageRepository;
+use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
+use App\Model\Dto\IndexPostDto;
 
 class StoredImageDto
 {
@@ -23,10 +24,11 @@ class StoredImageDto
 class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
-        public Request         $req,
-        public HTMLBuilder     $compose,
-        public PostRepository  $post_repo,
-        public ImageRepository $image_repo)
+        public Request                $req,
+        public HTMLBuilder            $compose,
+        public PostRepository         $post_repo,
+        public ImageRepository        $image_repo,
+        public PostCategoryRepository $post_category_repo)
     {
     }
 
@@ -36,6 +38,7 @@ class CreatePostHandler implements HandlerInterface
         $body = $this->req->post['post-body'];
         $image_list = $this->req->files['images'];
         $main_image = $_POST['main-image'];
+        $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
@@ -43,9 +46,24 @@ class CreatePostHandler implements HandlerInterface
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
         $payload = new IndexPostDto(user_id: 2, title: $title, body: $body, thumbnail_id: $stored_img_binary->thumbnail_uri);
         $post_id = $this->post_repo->createPost($payload);
-        $this->image_repo->createMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+        $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+        $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
 
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: "http://localhost:8080");
+    }
+
+    /**
+     * @param array $raw_categories
+     * @return int[]
+     */
+    public static function collectCategoryNumber(array $raw_categories): array
+    {
+        if (count($raw_categories) <= 0) return [];
+        $category_list = [];
+        foreach ($raw_categories as $category) {
+            $category_list[] = (int)$category;
+        }
+        return $category_list;
     }
 
     public static function storeImageBinaryToDisk(array $image_list, string $main_image): StoredImageDto
