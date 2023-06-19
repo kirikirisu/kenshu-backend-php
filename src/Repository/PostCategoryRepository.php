@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
 
-class CategoryRepository
+class PostCategoryRepository
 {
     public function __construct(
         public ?\PDO $pdo = null)
@@ -13,16 +13,17 @@ class CategoryRepository
     }
 
     /**
+     * @param int $post_id
      * @param int[] $category_list
      */
-    public function insertMultiCategory(array $category_list)
+    public function insertMultiCategory(int $post_id, array $category_list)
     {
-        $query = "INSERT INTO images (post_id, url) VALUES (?, ?)";
+        $query = "INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)";
         $stmt = $this->pdo->prepare($query);
 
-        foreach ($category_list as $image) {
+        foreach ($category_list as $category) {
             $stmt->bindParam(1, $post_id);
-            $stmt->bindParam(2, $image);
+            $stmt->bindParam(2, $category);
             $stmt->execute();
         }
     }
