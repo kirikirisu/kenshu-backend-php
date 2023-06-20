@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
+use App\Model\Dto\DetailPostDto;
 use App\Model\Dto\IndexPostDto;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
@@ -25,22 +26,23 @@ class PostRepository implements PostRepositoryInterface
         $raw_post_list = $res->fetchAll(\PDO::FETCH_ASSOC);
         $post_list = [];
 
+
         foreach ($raw_post_list as $post) {
-            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: explode(",", str_replace("}", "", str_replace("{", "", $post["tags"]))));
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: self::marchalString(text: $post['tags']));
         }
 
         return $post_list;
     }
 
-    public function getPostById(int $id): ShowPostDto
+    public function getPostById(int $id): DetailPostDto
     {
-        $query = "SELECT * from posts WHERE id = :id";
+        $query = "SELECT posts.*, array_agg(DISTINCT tags.name) AS tags, array_agg(DISTINCT images.url) AS images FROM posts LEFT JOIN post_tags ON post_id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id GROUP BY posts.id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"]);
+        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], tag_list: self::marchalString($raw_post["tags"]), image_list: self::marchalString($raw_post["images"]));
     }
 
     public function createPost(IndexPostDto $payload): int
@@ -81,7 +83,6 @@ class PostRepository implements PostRepositoryInterface
      */
     public static function marchalString(string $text): array
     {
-
-        return array("kfjd;");
+        return explode(",", str_replace("}", "", str_replace("{", "", $text)));
     }
 }
