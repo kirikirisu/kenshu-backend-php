@@ -12,6 +12,8 @@ use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
 use App\Model\Dto\IndexPostDto;
 
+const PUBLICK_DIR_FOR_IMG = "/assets/images/";
+
 class StoredImageDto
 {
     public function __construct(
@@ -68,7 +70,6 @@ class CreatePostHandler implements HandlerInterface
 
     public static function storeImageBinaryToDisk(array $image_list, string $main_image): StoredImageDto
     {
-        $img_public_dir = "/assets/images/";
         $saved_img_uri_list = [];
         $thumbnail_uri = '';
 
@@ -77,7 +78,7 @@ class CreatePostHandler implements HandlerInterface
                 $file_name = $_FILES['images']['name'][$key];
 
                 $uniqu_file_name = sprintf('%s_%s.%s', pathinfo($file_name, PATHINFO_FILENAME), time(), pathinfo($file_name, PATHINFO_EXTENSION));
-                $image_uri = sprintf('%s%s', $img_public_dir, $uniqu_file_name);
+                $image_uri = sprintf('%s%s', PUBLICK_DIR_FOR_IMG, $uniqu_file_name);
                 $saved_img_uri_list[] = $image_uri;
 
                 if ($file_name === $main_image) $thumbnail_uri = $image_uri;
