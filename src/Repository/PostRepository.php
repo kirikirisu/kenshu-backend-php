@@ -26,7 +26,7 @@ class PostRepository implements PostRepositoryInterface
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
-            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: explode(",", $post["tags"]));
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: explode(",", str_replace("}", "", str_replace("{", "", $post["tags"]))));
         }
 
         return $post_list;
@@ -73,5 +73,15 @@ class PostRepository implements PostRepositoryInterface
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $post_id);
         $stmt->execute();
+    }
+
+    /**
+     * @param string $text
+     * @return string[]
+     */
+    public static function marchalString(string $text): array
+    {
+
+        return array("kfjd;");
     }
 }

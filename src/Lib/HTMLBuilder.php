@@ -19,10 +19,10 @@ class HTMLBuilder
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
         $tag_part = file_get_contents(dirname(__DIR__) . '/view/html/part/tag.html');
 
-        $tag_list_fragment = "";
         $post_list_fragment = "";
 
         foreach ($data_chunk as $post) {
+            $tag_list_fragment = "";
             foreach($post->tag_list as $tag) {
                 $tag_list_fragment = $tag_list_fragment . str_replace("%tag%", $tag, $tag_part);
             }
