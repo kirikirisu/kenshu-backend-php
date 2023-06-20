@@ -20,13 +20,13 @@ class PostRepository implements PostRepositoryInterface
      */
     public function getPostList(): array
     {
-        $query = "SELECT * from posts ORDER BY id DESC";
+        $query = "SELECT p.*, array_agg(t.name) AS tags FROM posts p INNER JOIN post_tags pt ON p.id = pt.post_id INNER JOIN tags t ON pt.tag_id = t.id GROUP BY p.id";
         $res = $this->pdo->query($query);
         $raw_post_list = $res->fetchAll(\PDO::FETCH_ASSOC);
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
-            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"]);
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: explode(",", $post["tags"]));
         }
 
         return $post_list;

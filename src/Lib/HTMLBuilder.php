@@ -2,7 +2,7 @@
 
 namespace App\Lib;
 
-use App\Lib\Errors\InputError;
+use App\Lib\Error\InputError;
 use App\Model\Dto\ShowPostDto;
 
 class HTMLBuilder
@@ -17,12 +17,20 @@ class HTMLBuilder
     {
         $top_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/top.html');
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
+        $tag_part = file_get_contents(dirname(__DIR__) . '/view/html/part/tag.html');
 
+        $tag_list_fragment = "";
         $post_list_fragment = "";
 
         foreach ($data_chunk as $post) {
+            foreach($post->tag_list as $tag) {
+                $tag_list_fragment = $tag_list_fragment . str_replace("%tag%", $tag, $tag_part);
+            }
             $injected_title = str_replace("%title%", htmlspecialchars($post->title), $horizontal_card);
-            $post_list_fragment = $post_list_fragment . str_replace("%post_id%", $post->id, $injected_title);
+            $injected_post_id = str_replace("%post_id%", $post->id, $injected_title);
+            $injected_body = str_replace("%body%", $post->body, $injected_post_id);
+            $injected_image = str_replace("%image%", $post->thumbnail_id, $injected_body);
+            $post_list_fragment = $post_list_fragment . str_replace("%tags%", $tag_list_fragment, $injected_image);
         }
 
         $this->page = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);

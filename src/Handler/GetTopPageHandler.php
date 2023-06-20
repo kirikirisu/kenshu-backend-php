@@ -17,7 +17,6 @@ class GetTopPageHandler implements HandlerInterface
     public function run(): Response
     {
         $post_list = $this->post_client->getPostList();
-
         $html = $this->compose->topPage($post_list)->getHtml();
 
         return new Response(status_code: OK_STATUS_CODE, html: $html);
