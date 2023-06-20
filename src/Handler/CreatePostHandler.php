@@ -36,8 +36,8 @@ class CreatePostHandler implements HandlerInterface
     {
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
+        $main_image = $this->req->post['main-image'];
         $image_list = $this->req->files['images'];
-        $main_image = $_POST['main-image'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
