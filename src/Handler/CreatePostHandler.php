@@ -28,6 +28,7 @@ class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
         public Request                $req,
+        public \PDO                   $pdo,
         public HTMLBuilder            $compose,
         public PostRepository         $post_repo,
         public ImageRepository        $image_repo,
@@ -52,13 +53,20 @@ class CreatePostHandler implements HandlerInterface
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 
-        $payload = new IndexPostDto(user_id: 2, title: $title, body: $body);
-        $post_id = $this->post_repo->insertPost($payload);
-        $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);
-        $this->post_repo->updateThumbnail(post_id: $post_id, thumbnail_id: $img_id);
+        try {
+            $this->pdo->beginTransaction();
+            $payload = new IndexPostDto(user_id: 2, title: $title, body: $body);
+            $post_id = $this->post_repo->insertPost($payload);
+            $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);
+            $this->post_repo->updateThumbnail(post_id: $post_id, thumbnail_id: $img_id);
 
-        $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
-        $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+            $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
+            $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+            $this->pdo->commit();
+        } catch (\PDOException $e) {
+            $this->pdo->rollBack();
+            return new Response(status_code: INTERNAL_SERVER_ERROR_STATUS_CODE, html: "<div>サーバーでエラーが発生しました。</div>");
+        }
 
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: "http://localhost:8080");
     }

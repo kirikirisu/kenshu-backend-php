@@ -15,6 +15,7 @@ use App\Lib\Singleton\PageCompose;
 use App\Repository\ImageRepository;
 use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
+use App\Lib\Singleton\PgConnect;
 
 class Route
 {
@@ -24,7 +25,8 @@ class Route
             return new GetTopPageHandler(compose: PageCompose::getComposer(), post_client: new PostRepository());
 
         } else if ($req->method === "POST" && $req->path === "/") {
-            return new CreatePosthandler(req: $req, compose: PageCompose::getComposer(), post_repo: new PostRepository(), image_repo: new ImageRepository(), post_category_repo: new PostCategoryRepository());
+            $pdo = PgConnect::getClient();
+            return new CreatePosthandler(req: $req, pdo: $pdo, compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), post_category_repo: new PostCategoryRepository(pdo: $pdo));
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
