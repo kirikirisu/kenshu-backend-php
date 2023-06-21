@@ -4,9 +4,10 @@ namespace App\Lib;
 
 use App\Lib\Error\InputError;
 use App\Lib\Manager\CsrfManager;
+use App\Model\Dto\DetailPostDto;
 use App\Model\Dto\ShowPostDto;
 
-class HTMLBuilder implements HTMLBuilderInterface
+class HTMLBuilder
 {
     public string $page = "";
 
@@ -22,13 +23,16 @@ class HTMLBuilder implements HTMLBuilderInterface
         $post_list_fragment = "";
 
         foreach ($data_chunk as $post) {
+            $tag_list_fragment = self::createTagList($post->tag_list);
             $injected_title = str_replace("%title%", htmlspecialchars($post->title), $horizontal_card);
-            $post_list_fragment = $post_list_fragment . str_replace("%post_id%", $post->id, $injected_title);
+            $injected_post_id = str_replace("%post_id%", $post->id, $injected_title);
+            $injected_body = str_replace("%body%", $post->body, $injected_post_id);
+            $injected_image = str_replace("%image%", $post->thumbnail_id, $injected_body);
+            $post_list_fragment = $post_list_fragment . str_replace("%tags%", $tag_list_fragment, $injected_image);
         }
 
         $replaced_post_list  = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
         $this->page = str_replace("%csrf%", CsrfManager::generate(), $replaced_post_list);
-
 
         if ($error_list) {
             foreach ($error_list as $error) {
@@ -50,11 +54,13 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $this;
     }
 
-    public function postDetailPage(ShowPostDto $post): self
+    public function postDetailPage(DetailPostDto $post): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $post_detail_page_base_html);
-        $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
+        $body_replaced = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
+        $tag_replaced = str_replace("%tags%", self::createTagList(tag_list: $post->tag_list), $body_replaced);
+        $this->page = str_replace("%images%", self::createImageList(image_list: $post->image_list), $tag_replaced);
 
         return $this;
     }
@@ -84,5 +90,36 @@ class HTMLBuilder implements HTMLBuilderInterface
     public function getHtml(): string
     {
         return $this->page;
+    }
+
+    /**
+     * @param string[] $tag_list
+     * @return string
+     */
+    public static function createTagList(array $tag_list): string
+    {
+        $tag_part = file_get_contents(dirname(__DIR__) . '/view/html/part/tag.html');
+
+        $tag_list_fragment = "";
+        foreach ($tag_list as $tag) {
+            $tag_list_fragment = $tag_list_fragment . str_replace("%tag%", $tag, $tag_part);
+        }
+
+        return $tag_list_fragment;
+    }
+
+    /**
+     * @param string[] $image_list
+     * @return string
+     */
+    public static function createImageList(array $image_list): string
+    {
+        $image_part = file_get_contents(dirname(__DIR__) . '/view/html/part/image.html');
+
+        $image_list_fragment = "";
+        foreach ($image_list as $image) {
+            $image_list_fragment = $image_list_fragment . str_replace("%src%", $image, $image_part);
+        }
+        return $image_list_fragment;
     }
 }
