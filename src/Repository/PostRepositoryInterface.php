@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Model\Dto\DetailPostDto;
 use App\Model\Dto\IndexPostDto;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
@@ -11,7 +12,7 @@ interface PostRepositoryInterface
     /* @return ShowPostDto[] */
     public function getPostList(): array;
 
-    public function getPostById(int $id): ShowPostDto;
+    public function getPostById(int $id): DetailPostDto;
 
     public function insertPost(IndexPostDto $payload): int;
 

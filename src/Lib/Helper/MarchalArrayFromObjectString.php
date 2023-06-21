@@ -1,11 +1,15 @@
 <?php
+
 namespace App\Lib\Helper;
 
 /**
  * @param string $text
  * @return string[]
  */
-function marchal_array_from_object_string(string $text): array
+class MarchalArrayFromObjectString
 {
-    return explode(",", str_replace("}", "", str_replace("{", "", $text)));
+    public static function exec(string $text)
+    {
+        return explode(",", str_replace("}", "", str_replace("{", "", $text)));
+    }
 }
