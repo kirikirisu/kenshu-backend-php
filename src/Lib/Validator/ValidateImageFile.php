@@ -3,17 +3,10 @@
 namespace App\Lib\Validator;
 
 use App\Lib\Http\Request;
-
-class ImageFileError
-{
-    public function __construct(public string $message)
-    {
-    }
-}
+use App\Lib\Error\ImageFileError;
 
 class ValidateImageFile
 {
-
     public static function exec(Request $req): ImageFileError|null
     {
         $img_error = null;

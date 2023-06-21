@@ -6,24 +6,17 @@ use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
+use App\Lib\Manager\CsrfManager;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\IndexPostDto;
 use App\Repository\ImageRepository;
 use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
-use App\Lib\Manager\CsrfManager;
+use App\Model\Dto\StoredImageDto;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
-class StoredImageDto
-{
-    public function __construct(
-        public array  $stored_img_uri_list,
-        public string $thumbnail_uri)
-    {
-    }
-}
 
 class CreatePostHandler implements HandlerInterface
 {
