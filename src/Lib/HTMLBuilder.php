@@ -2,7 +2,7 @@
 
 namespace App\Lib;
 
-use App\Lib\Errors\InputError;
+use App\Lib\Error\InputError;
 use App\Model\Dto\ShowPostDto;
 
 class HTMLBuilder

@@ -12,6 +12,17 @@ class ImageRepository
         if (is_null($pdo)) $this->pdo = PgConnect::getClient();
     }
 
+    public function insertImage(int $post_id, string $img_path): int
+    {
+        $query = "INSERT INTO images (post_id, url) VALUES (:post_id, :img_path) RETURNING id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":post_id", $post_id);
+        $stmt->bindParam(":img_path", $img_path);
+        $stmt->execute();
+        $result = $stmt->fetch();
+        return $result['id'];
+    }
+
     public function insertMultiImageForPost(int $post_id, array $image_list)
     {
         $query = "INSERT INTO images (post_id, url) VALUES (?, ?)";

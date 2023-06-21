@@ -2,14 +2,14 @@
 
 namespace App\Handler;
 
-use App\Repository\PostRepository;
-use App\Lib\Errors\InputError;
+use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
+use App\Repository\PostRepository;
 
 class UpdatePostHandler implements HandlerInterface
 {

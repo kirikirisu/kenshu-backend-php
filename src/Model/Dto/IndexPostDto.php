@@ -7,8 +7,7 @@ class IndexPostDto
     function __construct(
         public int    $user_id,
         public string $title,
-        public string $body,
-        public string $thumbnail_id)
+        public string $body)
     {
     }
 }

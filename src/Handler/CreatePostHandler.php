@@ -7,10 +7,10 @@ use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
+use App\Model\Dto\IndexPostDto;
 use App\Repository\ImageRepository;
 use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
-use App\Model\Dto\IndexPostDto;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
@@ -46,10 +46,15 @@ class CreatePostHandler implements HandlerInterface
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
-        $payload = new IndexPostDto(user_id: 2, title: $title, body: $body, thumbnail_id: $stored_img_binary->thumbnail_uri);
-        $post_id = $this->post_repo->createPost($payload);
-        $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+
+        $payload = new IndexPostDto(user_id: 2, title: $title, body: $body);
+        $post_id = $this->post_repo->insertPost($payload);
+        $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);
+        $this->post_repo->updateThumbnail(post_id: $post_id, thumbnail_id: $img_id);
+
         $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
+        $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
+
 
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: "http://localhost:8080");
     }
@@ -79,13 +84,17 @@ class CreatePostHandler implements HandlerInterface
 
                 $uniqu_file_name = sprintf('%s_%s.%s', pathinfo($file_name, PATHINFO_FILENAME), time(), pathinfo($file_name, PATHINFO_EXTENSION));
                 $image_uri = sprintf('%s%s', PUBLICK_DIR_FOR_IMG, $uniqu_file_name);
-                $saved_img_uri_list[] = $image_uri;
-
-                if ($file_name === $main_image) $thumbnail_uri = $image_uri;
 
                 $temp_file_path = $_FILES['images']['tmp_name'][$key];
                 $stored_dir = sprintf('%s%s', dirname(__DIR__) . "/public/assets/images/", $uniqu_file_name);
                 move_uploaded_file($temp_file_path, $stored_dir);
+
+                if ($file_name === $main_image) {
+                    $thumbnail_uri = $image_uri;
+                    continue;
+                }
+
+                $saved_img_uri_list[] = $image_uri;
             }
         }
 
@@ -94,7 +103,9 @@ class CreatePostHandler implements HandlerInterface
 
     /**
      * @param HTMLBuilder $compose
+     * @param PostRepository $post_repo
      * @param InputError[] $error_list
+     * @return Response
      */
     public static function createTopPageWithError(HTMLBuilder $compose, PostRepository $post_repo, array $error_list): Response
     {
