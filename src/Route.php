@@ -22,9 +22,11 @@ class Route
     public static function getHandler(Request $req): HandlerInterface
     {
         if ($req->method === "GET" && $req->path === "/") {
+            session_start();
             return new GetTopPageHandler(compose: PageCompose::getComposer(), post_client: new PostRepository());
 
         } else if ($req->method === "POST" && $req->path === "/") {
+            session_start();
             $pdo = PgConnect::getClient();
             return new CreatePosthandler(req: $req, pdo: $pdo, compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), post_category_repo: new PostCategoryRepository(pdo: $pdo));
 

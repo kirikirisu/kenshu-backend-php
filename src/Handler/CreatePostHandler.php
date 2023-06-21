@@ -12,6 +12,7 @@ use App\Model\Dto\IndexPostDto;
 use App\Repository\ImageRepository;
 use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
+use App\Lib\Manager\CsrfManager;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
@@ -43,6 +44,8 @@ class CreatePostHandler implements HandlerInterface
         $main_image = $this->req->post['main-image'];
         $image_list = $this->req->files['images'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
+
+        if (!CsrfManager::validate($this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);

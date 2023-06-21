@@ -3,6 +3,7 @@
 namespace App\Lib;
 
 use App\Lib\Error\InputError;
+use App\Lib\Manager\CsrfManager;
 use App\Model\Dto\ShowPostDto;
 
 class HTMLBuilder
@@ -25,7 +26,9 @@ class HTMLBuilder
             $post_list_fragment = $post_list_fragment . str_replace("%post_id%", $post->id, $injected_title);
         }
 
-        $this->page = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
+        $replaced_post_list  = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $replaced_post_list);
+
 
         if ($error_list) {
             foreach ($error_list as $error) {
