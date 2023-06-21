@@ -6,6 +6,7 @@ use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
+use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\IndexPostDto;
 use App\Repository\ImageRepository;
@@ -45,6 +46,10 @@ class CreatePostHandler implements HandlerInterface
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
 
+        $img_error = ValidateImageFile::exec(req: $this->req);
+        // TODO: create ui
+        if (!is_null($img_error)) return new Response(status_code: OK_STATUS_CODE, html: "<div>{$img_error->message}</div>");
+
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 
         $payload = new IndexPostDto(user_id: 2, title: $title, body: $body);
@@ -54,7 +59,6 @@ class CreatePostHandler implements HandlerInterface
 
         $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
         $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
-
 
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: "http://localhost:8080");
     }

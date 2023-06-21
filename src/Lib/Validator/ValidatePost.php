@@ -5,6 +5,12 @@ use App\Lib\Error\InputError;
 
 class ValidatePost
 {
+    /**
+     * @param string $title
+     * @param string $body
+     * @param string $main_image
+     * @return InputError[]
+     */
     public static function exec(string $title, string $body, string $main_image): array
     {
         /** @var InputError[] $error_list */

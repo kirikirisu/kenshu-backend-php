@@ -27,8 +27,9 @@ class UpdatePostHandler implements HandlerInterface
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
 
-        $error_list = ValidatePost::exec(title: $title, body: $body);
+        $error_list = ValidatePost::exec(title: $title, body: $body, main_image: "g");
         if (count($error_list) > 0) return static::createEditPageWithError(compose: $this->compose, post: new ShowPostDto(id: $this->post_id, user_id: 2, title: $title, body: $body, thumbnail_id: 1), error_list: $error_list);
+
 
         $dto = new UpdatePostDto(title: $title, body: $body, thumbnail_id: 1);
         $this->post_client->updatePost($this->post_id, $dto);
@@ -41,6 +42,7 @@ class UpdatePostHandler implements HandlerInterface
      * @param HTMLBuilder $compose
      * @param ShowPostDto $post
      * @param InputError[] $error_list
+     * @return Response
      */
     public static function createEditPageWithError(HTMLBuilder $compose, ShowPostDto $post, array $error_list): Response
     {
