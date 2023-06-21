@@ -1,5 +1,5 @@
 <?php
-namespace App\Lib\Errors;
+namespace App\Lib\Error;
 
 class InputError
 {

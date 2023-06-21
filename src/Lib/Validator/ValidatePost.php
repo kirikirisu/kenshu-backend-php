@@ -1,11 +1,17 @@
 <?php
 namespace App\Lib\Validator;
 
-use App\Lib\Errors\InputError;
+use App\Lib\Error\InputError;
 
 class ValidatePost
 {
-    public static function exec(string $title, string $body): array
+    /**
+     * @param string $title
+     * @param string $body
+     * @param string $main_image
+     * @return InputError[]
+     */
+    public static function exec(string $title, string $body, string $main_image): array
     {
         /** @var InputError[] $error_list */
         $error_list = [];
@@ -15,6 +21,9 @@ class ValidatePost
         }
         if ($body === "") {
             $error_list[] = new InputError("本文を入力してください。", "body");
+        }
+        if ($main_image === "") {
+            $error_list[] = new InputError("メイン画像を選択してください", "image");
         }
 
         return $error_list;

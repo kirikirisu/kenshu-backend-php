@@ -5,13 +5,53 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<title>kenshu-backend-php</title>
 	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		const onClickImage = (e, doc) => {
+			e.preventDefault();
+			const filename = e.target.id.split("-")[0];
+
+			const mainImageInput = doc.getElementById("main-image");
+			mainImageInput.value = filename
+			console.log(filename)
+		}
+
+		const fileDragOver = (e) => {
+			e.preventDefault()
+		}
+
+		// const counter = () => {
+		// 	let count = 0;
+		// 	return () => count++
+		// }
+		const createImageId = (iniNum) => () => {
+			return iniNum++
+		}
+		const count = createImageId(0)
+
+		const fileDrop = (e, type) => {
+			e.preventDefault()
+
+			const files = type === "input" ? e.target.files : e.dataTransfer.files
+			for (let i = 0; i < files.length; i++) {
+				const file = files[i]
+
+				const reader = new FileReader()
+				reader.onload = (event) => {
+					const base64Text = event.currentTarget.result
+
+					document.querySelector('#uploadImageArea').innerHTML += `<img id="${file.name}-${count()}" alt=${file.name} onclick="onClickImage(event, document)" class="w-40 h-40" src="${base64Text}" width="20%" />`
+				}
+				reader.readAsDataURL(file)
+			}
+		}
+	</script>
 </head>
 <body class="mx-auto max-w-4xl">
 <header class="mt-5 mb-10">
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
-	<form action="/" method="post" class="w-2/5">
+	<form action="/" method="post" enctype="multipart/form-data" class="w-2/5">
 		<label for="post-title" class="block text-base font-semibold"
 		>タイトル</label
 		>
@@ -40,6 +80,28 @@
 			</div>
 		</div>
 		%invalid_body%
+		<div ondrop="fileDrop(event)" ondragover="fileDragOver(event)" class="w-96 h-32 bg-slate-400">
+			<div class="p-5">
+				ここにドラッグ＆ドロップ
+			</div>
+		</div>
+		<input id="fileInput" multiple type="file" accept="image/*" value="ファイルを選択" name="images[]"
+				onchange="fileDrop(event, 'input')">
+		%invalid_image%
+		<div id="uploadImageArea"></div>
+		<div>
+			<label><input type="checkbox" name="categories[]" value="1">総合</label>
+			<label><input type="checkbox" name="categories[]" value="2">テクノロジー</label>
+			<label><input type="checkbox" name="categories[]" value="3">モバイル</label>
+			<label><input type="checkbox" name="categories[]" value="4">アプリ</label>
+			<label><input type="checkbox" name="categories[]" value="5">エンタメ</label>
+			<label><input type="checkbox" name="categories[]" value="6">ビューティー</label>
+			<label><input type="checkbox" name="categories[]" value="7">ファッション</label>
+			<label><input type="checkbox" name="categories[]" value="8">ライフスタイル</label>
+			<label><input type="checkbox" name="categories[]" value="9">ビジネス</label>
+		</div>
+		<input id="main-image" type="text" name="main-image" hidden value=""/>
+		<input id="csrf" type="text" name="csrf" hidden value="%csrf%"/>
 		<button
 				type="submit"
 				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"

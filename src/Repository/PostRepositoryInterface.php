@@ -13,7 +13,9 @@ interface PostRepositoryInterface
 
     public function getPostById(int $id): ShowPostDto;
 
-    public function createPost(IndexPostDto $payload): void;
+    public function insertPost(IndexPostDto $payload): int;
+
+    public function updateThumbnail(int $post_id, int $thumbnail_id): void;
 
     public function updatePost(int $post_id, UpdatePostDto $dto): void;
 
