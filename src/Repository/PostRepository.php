@@ -36,7 +36,7 @@ class PostRepository implements PostRepositoryInterface
 
     public function getPostById(int $id): DetailPostDto
     {
-        $query = "SELECT posts.*, array_agg(DISTINCT tags.name) AS tags, array_agg(DISTINCT images.url) AS images FROM posts LEFT JOIN post_tags ON post_id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id GROUP BY posts.id";
+        $query = "SELECT posts.*, array_agg(DISTINCT tags.name) AS tags, array_agg(DISTINCT images.url) AS images FROM posts LEFT JOIN post_tags ON posts.id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id AND post_tags.post_id = :id GROUP BY posts.id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
