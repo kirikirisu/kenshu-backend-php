@@ -6,7 +6,7 @@ use App\Lib\Error\InputError;
 use App\Lib\Manager\CsrfManager;
 use App\Model\Dto\ShowPostDto;
 
-class HTMLBuilder
+class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
 

@@ -10,23 +10,23 @@ use App\Lib\Manager\CsrfManager;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\IndexPostDto;
-use App\Repository\ImageRepository;
-use App\Repository\PostCategoryRepository;
-use App\Repository\PostRepository;
 use App\Model\Dto\StoredImageDto;
+use App\Repository\ImageRepositoryInterface;
+use App\Repository\PostCategoryRepositoryInterface;
+use App\Repository\PostRepository;
+use App\Repository\PostRepositoryInterface;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
-
 
 class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
-        public Request                $req,
-        public \PDO                   $pdo,
-        public HTMLBuilder            $compose,
-        public PostRepository         $post_repo,
-        public ImageRepository        $image_repo,
-        public PostCategoryRepository $post_category_repo)
+        public Request                         $req,
+        public \PDO                            $pdo,
+        public HTMLBuilder                     $compose,
+        public PostRepositoryInterface         $post_repo,
+        public ImageRepositoryInterface        $image_repo,
+        public PostCategoryRepositoryInterface $post_category_repo)
     {
     }
 

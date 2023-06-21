@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
 
-class PostCategoryRepository
+class PostCategoryRepository implements PostCategoryRepositoryInterface
 {
     public function __construct(
         public ?\PDO $pdo = null)

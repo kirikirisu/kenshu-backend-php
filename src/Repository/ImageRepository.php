@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
 
-class ImageRepository
+class ImageRepository implements ImageRepositoryInterface
 {
     public function __construct(
         public ?\PDO $pdo = null)

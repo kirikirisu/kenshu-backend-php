@@ -9,7 +9,7 @@ use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
-use App\Repository\PostRepository;
+use App\Repository\PostRepositoryInterface;
 
 class UpdatePostHandler implements HandlerInterface
 {
@@ -18,7 +18,7 @@ class UpdatePostHandler implements HandlerInterface
         public Request        $req,
         public int            $post_id,
         public HTMLBuilder    $compose,
-        public PostRepository $post_client)
+        public PostRepositoryInterface $post_client)
     {
     }
 
