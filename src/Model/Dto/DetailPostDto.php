@@ -10,8 +10,7 @@ class DetailPostDto
      * @param string $title
      * @param string $body
      * @param string $thumbnail_id
-     * @param string[] $tag_list
-     * @param string[] $image_list
+     * @param string $thumbnail_url
      */
     public function __construct(
         public int    $id,
@@ -19,8 +18,7 @@ class DetailPostDto
         public string $title,
         public string $body,
         public string $thumbnail_id,
-        public array  $tag_list,
-        public array  $image_list)
+        public string $thumbnail_url)
     {
     }
 }

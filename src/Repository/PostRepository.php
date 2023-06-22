@@ -37,14 +37,14 @@ class PostRepository implements PostRepositoryInterface
 
     public function getPostById(int $id): DetailPostDto
     {
-        $query = "SELECT posts.*, array_agg(tags.name) AS tags, array_agg(images.url) AS images FROM posts LEFT JOIN post_tags ON posts.id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id AND post_tags.post_id = :id GROUP BY posts.id";
+        $query = "SELECT posts.*, images.url AS thumbnail_url FROM posts INNER JOIN images ON posts.thumbnail_id = images.id WHERE posts.id = :id";
 
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], tag_list: PDOHelper::convertArrayAggResult(text: $raw_post['tags']), image_list: PDOHelper::convertArrayAggResult(text: $raw_post['images']));
+        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"]);
     }
 
     public function insertPost(IndexPostDto $payload): int

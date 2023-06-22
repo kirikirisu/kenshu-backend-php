@@ -13,6 +13,36 @@ class ImageRepository implements ImageRepositoryInterface
         if (is_null($pdo)) $this->pdo = PgConnect::getClient();
     }
 
+    public function getImageById(int $image_id): IndexImageDto
+    {
+        $query = "SELECT * FROM images WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $image_id);
+        $stmt->execute();
+        $raw_image = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
+
+        return new IndexImageDto(id: $raw_image['id'], post_id: $raw_image['post_id'], url: $raw_image['url']);
+    }
+
+    /**
+     * @param int $post_id
+     * @return IndexImageDto[]
+     */
+    public function getImageListByPostId(int $post_id): array {
+        $query = "SELECT * FROM images WHERE post_id = :post_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":post_id", $post_id);
+        $stmt->execute();
+        $raw_image_list = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $image_list = [];
+
+        foreach($raw_image_list as $raw_image) {
+            $image_list[] = new IndexImageDto(id: $raw_image['id'], post_id: $raw_image['post_id'], url: $raw_image['url']);
+        }
+
+        return $image_list;
+    }
+
     public function insertImage(int $post_id, string $img_path): int
     {
         $query = "INSERT INTO images (post_id, url) VALUES (:post_id, :img_path) RETURNING id";
@@ -24,16 +54,6 @@ class ImageRepository implements ImageRepositoryInterface
         return $result['id'];
     }
 
-    public function getImageById(int $image_id): IndexImageDto
-    {
-        $query = "SELECT * FROM images WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(":id", $image_id);
-        $stmt->execute();
-        $raw_image = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
-
-        return new IndexImageDto(id: $raw_image['id'], post_id: $raw_image['post_id'], url: $raw_image['url']);
-    }
 
     public function insertMultiImageForPost(int $post_id, array $image_list)
     {
