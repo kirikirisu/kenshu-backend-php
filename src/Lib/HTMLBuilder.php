@@ -19,7 +19,7 @@ class UIMaterial
     }
 }
 
-class HTMLBuilder
+class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
 
@@ -94,7 +94,7 @@ class HTMLBuilder
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
         $body_replaced = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
         $tag_list = self::createCheckboxList($post->tag_list);
-        $tag_list_replaced  = str_replace("%tag_list%", $tag_list, $body_replaced);
+        $tag_list_replaced = str_replace("%tag_list%", $tag_list, $body_replaced);
         $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
 
         if ($error_list) {

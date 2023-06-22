@@ -2,7 +2,7 @@
 
 namespace App\Handler;
 
-use App\Lib\HTMLBuilder;
+use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Response;
 use App\Repository\ImageRepositoryInterface;
 use App\Repository\PostRepositoryInterface;
@@ -12,7 +12,7 @@ class GetPostDetailPageHandler implements HandlerInterface
 {
     public function __construct(
         public int                      $post_id,
-        public HTMLBuilder              $compose,
+        public HTMLBuilderInterface     $compose,
         public PostRepositoryInterface  $post_repo,
         public ImageRepositoryInterface $image_repo,
         public TagRepositoryInterface   $tag_repo)

@@ -4,6 +4,7 @@ namespace App\Handler;
 
 use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
+use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Validator\ValidatePost;
@@ -15,9 +16,9 @@ class UpdatePostHandler implements HandlerInterface
 {
 
     public function __construct(
-        public Request        $req,
-        public int            $post_id,
-        public HTMLBuilder    $compose,
+        public Request                 $req,
+        public int                     $post_id,
+        public HTMLBuilderInterface    $compose,
         public PostRepositoryInterface $post_client)
     {
     }

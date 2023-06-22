@@ -4,6 +4,7 @@ namespace App\Handler;
 
 use App\Lib\Error\InputError;
 use App\Lib\HTMLBuilder;
+use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Manager\CsrfManager;
@@ -23,7 +24,7 @@ class CreatePostHandler implements HandlerInterface
     public function __construct(
         public Request                         $req,
         public \PDO                            $pdo,
-        public HTMLBuilder                     $compose,
+        public HTMLBuilderInterface            $compose,
         public PostRepositoryInterface         $post_repo,
         public ImageRepositoryInterface        $image_repo,
         public PostCategoryRepositoryInterface $post_category_repo)
