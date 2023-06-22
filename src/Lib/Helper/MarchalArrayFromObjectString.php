@@ -8,8 +8,7 @@ namespace App\Lib\Helper;
  */
 class MarchalArrayFromObjectString
 {
-    public static function exec(string $text)
+    public static function exec(string $text): array
     {
-        return explode(",", str_replace("}", "", str_replace("{", "", $text)));
     }
 }

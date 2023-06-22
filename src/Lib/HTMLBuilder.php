@@ -27,7 +27,7 @@ class HTMLBuilder
             $injected_title = str_replace("%title%", htmlspecialchars($post->title), $horizontal_card);
             $injected_post_id = str_replace("%post_id%", $post->id, $injected_title);
             $injected_body = str_replace("%body%", $post->body, $injected_post_id);
-            $injected_image = str_replace("%image%", $post->thumbnail_id, $injected_body);
+            $injected_image = str_replace("%image%", $post->thumbnail_url, $injected_body);
             $post_list_fragment = $post_list_fragment . str_replace("%tags%", $tag_list_fragment, $injected_image);
         }
 

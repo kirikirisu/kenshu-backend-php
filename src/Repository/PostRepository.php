@@ -2,12 +2,13 @@
 
 namespace App\Repository;
 
+use App\Lib\Helper\MarchalArrayFromObjectString;
 use App\Lib\Singleton\PgConnect;
 use App\Model\Dto\DetailPostDto;
 use App\Model\Dto\IndexPostDto;
 use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
-use App\Lib\Helper\MarchalArrayFromObjectString;
+use App\Lib\Helper\PDOHelper;
 
 class PostRepository implements PostRepositoryInterface
 {
@@ -22,13 +23,13 @@ class PostRepository implements PostRepositoryInterface
      */
     public function getPostList(): array
     {
-        $query = "SELECT p.*, array_agg(t.name) AS tags FROM posts p INNER JOIN post_tags pt ON p.id = pt.post_id INNER JOIN tags t ON pt.tag_id = t.id GROUP BY p.id";
+        $query = "SELECT p.*, array_agg(images.url) AS thumbnail, array_agg(t.name) AS tags FROM posts p INNER JOIN images ON p.thumbnail_id = images.id INNER JOIN post_tags pt ON p.id = pt.post_id INNER JOIN tags t ON pt.tag_id = t.id GROUP BY p.id";
         $res = $this->pdo->query($query);
         $raw_post_list = $res->fetchAll(\PDO::FETCH_ASSOC);
         $post_list = [];
 
         foreach ($raw_post_list as $post) {
-            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_id: $post["thumbnail_id"], tag_list: MarchalArrayFromObjectString::exec(text: $post['tags']));
+            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_url: PDOHelper::convertArrayAggResult(text: $post["thumbnail"])[0], tag_list: PDOHelper::convertArrayAggResult(text: $post['tags']));
         }
 
         return $post_list;
@@ -36,13 +37,13 @@ class PostRepository implements PostRepositoryInterface
 
     public function getPostById(int $id): DetailPostDto
     {
-        $query = "SELECT posts.*, array_agg(DISTINCT tags.name) AS tags, array_agg(DISTINCT images.url) AS images FROM posts LEFT JOIN post_tags ON posts.id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id AND post_tags.post_id = :id GROUP BY posts.id";
+        $query = "SELECT posts.*, array_agg(tags.name) AS tags, array_agg(images.url) AS images FROM posts LEFT JOIN post_tags ON posts.id = post_tags.post_id LEFT JOIN tags ON post_tags.tag_id = tags.id LEFT JOIN images ON posts.id = images.post_id WHERE posts.id = :id AND post_tags.post_id = :id GROUP BY posts.id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], tag_list: MarchalArrayFromObjectString::exec(text: $raw_post['tags']), image_list: MarchalArrayFromObjectString::exec(text: $raw_post['images']));
+        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], tag_list: PDOHelper::convertArrayAggResult(text: $raw_post['tags']), image_list: PDOHelper::convertArrayAggResult(text: $raw_post['images']));
     }
 
     public function insertPost(IndexPostDto $payload): int

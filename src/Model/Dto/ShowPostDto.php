@@ -8,7 +8,7 @@ class ShowPostDto
      * @param int $user_id
      * @param string $title
      * @param string $body
-     * @param int $thumbnail_id
+     * @param string $thumbnail_url
      * @param string[] $tag_list
      */
     public function __construct(
@@ -16,7 +16,7 @@ class ShowPostDto
         public int    $user_id,
         public string $title,
         public string $body,
-        public int $thumbnail_id,
+        public string $thumbnail_url,
         public array $tag_list)
     {
     }

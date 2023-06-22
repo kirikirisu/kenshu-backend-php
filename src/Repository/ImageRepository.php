@@ -23,6 +23,10 @@ class ImageRepository implements ImageRepositoryInterface
         return $result['id'];
     }
 
+    public function getImageListByPostId(int $post_id)
+    {
+    }
+
     public function insertMultiImageForPost(int $post_id, array $image_list)
     {
         $query = "INSERT INTO images (post_id, url) VALUES (?, ?)";
