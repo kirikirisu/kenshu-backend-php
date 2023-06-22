@@ -26,10 +26,14 @@
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
-	<h2>%title%</h2>
-	<p>%body%</p>
+	<label for="title" class="font-bold">title:</label>
+	<h2 id="title">%title%</h2>
+	<label for="body" class="font-bold">body:</label>
+	<p id="body">%body%</p>
+	<div class="font-bold">tags</div>
 	<div>%tags%</div>
-	<div>%images%</div>
+	<div class="font-bold">images</div>
+	<div class="flex">%images%</div>
 	<button onclick="getPostEditPage()">編集</button>
 	<form method="post" action="">
 		<input hidden id="_method" name="_method" value="DELETE"/>

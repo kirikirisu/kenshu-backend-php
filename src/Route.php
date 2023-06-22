@@ -12,10 +12,10 @@ use App\Handler\NotFoundHandler;
 use App\Handler\UpdatePostHandler;
 use App\Lib\Http\Request;
 use App\Lib\Singleton\PageCompose;
+use App\Lib\Singleton\PgConnect;
 use App\Repository\ImageRepository;
 use App\Repository\PostCategoryRepository;
 use App\Repository\PostRepository;
-use App\Lib\Singleton\PgConnect;
 
 class Route
 {
@@ -32,7 +32,8 @@ class Route
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
-            return new GetPostDetailPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_client: new PostRepository());
+            $pdo = PgConnect::getClient();
+            return new GetPostDetailPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(), image_repo: new ImageRepository());
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];

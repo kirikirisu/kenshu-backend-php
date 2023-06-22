@@ -7,7 +7,7 @@ class PDOHelper
      * @param string $text
      * @return string[]
      */
-    public static function marchalArrayFromObjectString(string $text)
+    public static function marchalArrayFromObjectString(string $text): array
     {
         return explode(",", str_replace("}", "", str_replace("{", "", $text)));
     }

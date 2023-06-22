@@ -5,6 +5,7 @@ namespace App\Lib;
 use App\Lib\Error\InputError;
 use App\Lib\Manager\CsrfManager;
 use App\Model\Dto\DetailPostDto;
+use App\Model\Dto\IndexImageDto;
 use App\Model\Dto\ShowPostDto;
 
 class HTMLBuilder
@@ -31,7 +32,7 @@ class HTMLBuilder
             $post_list_fragment = $post_list_fragment . str_replace("%tags%", $tag_list_fragment, $injected_image);
         }
 
-        $replaced_post_list  = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
+        $replaced_post_list = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
         $this->page = str_replace("%csrf%", CsrfManager::generate(), $replaced_post_list);
 
         if ($error_list) {
@@ -54,13 +55,13 @@ class HTMLBuilder
         return $this;
     }
 
-    public function postDetailPage(DetailPostDto $post): self
+    public function postDetailPage(DetailPostDto $post, IndexImageDto $thumbnail): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $post_detail_page_base_html);
         $body_replaced = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
         $tag_replaced = str_replace("%tags%", self::createTagList(tag_list: $post->tag_list), $body_replaced);
-        $this->page = str_replace("%images%", self::createImageList(image_list: $post->image_list), $tag_replaced);
+        $this->page = str_replace("%images%", self::createImageList(image_list: $post->image_list, thumbnail_url: $thumbnail->url), $tag_replaced);
 
         return $this;
     }
@@ -112,14 +113,22 @@ class HTMLBuilder
      * @param string[] $image_list
      * @return string
      */
-    public static function createImageList(array $image_list): string
+    public static function createImageList(array $image_list, string $thumbnail_url): string
     {
         $image_part = file_get_contents(dirname(__DIR__) . '/view/html/part/image.html');
+        $thumbnail_style = "border-8 border-orange-500";
 
         $image_list_fragment = "";
-        foreach ($image_list as $image) {
-            $image_list_fragment = $image_list_fragment . str_replace("%src%", $image, $image_part);
+        foreach ($image_list as $image_url) {
+            $replaced_image_list = str_replace("%src%", $image_url, $image_part);
+
+            if ($thumbnail_url === $image_url) {
+               $image_list_fragment = $image_list_fragment . str_replace("%thumbnail_style%", $thumbnail_style, $replaced_image_list);
+            } else {
+                $image_list_fragment = $image_list_fragment . str_replace("%thumbnail_style%", "", $replaced_image_list);
+            }
         }
+
         return $image_list_fragment;
     }
 }

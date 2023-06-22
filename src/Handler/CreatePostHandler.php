@@ -90,7 +90,7 @@ class CreatePostHandler implements HandlerInterface
             if ($error == UPLOAD_ERR_OK) {
                 $file_name = $image_list['name'][$key];
 
-                $uniqu_file_name = sprintf('%s_%s.%s', pathinfo($file_name, PATHINFO_FILENAME), time(), pathinfo($file_name, PATHINFO_EXTENSION));
+                $uniqu_file_name = sprintf('%s.%s', uniqid(pathinfo($file_name, PATHINFO_FILENAME)), pathinfo($file_name, PATHINFO_EXTENSION));
                 $image_uri = sprintf('%s%s', PUBLICK_DIR_FOR_IMG, $uniqu_file_name);
 
                 $temp_file_path = $image_list['tmp_name'][$key];
