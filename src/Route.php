@@ -20,6 +20,7 @@ use App\Lib\Singleton\PgConnect;
 use App\Repository\ImageRepository;
 use App\Repository\PostRepository;
 use App\Repository\TagRepository;
+use App\Repository\UserRepository;
 
 class Route
 {
@@ -58,7 +59,7 @@ class Route
             return new GetSignUpPageHandler(compose: PageCompose::getComposer());
 
         } else if ($req->method === "POST" && $req->path === "/user/signup") {
-            return new CreateUserHandler(req: $req, compose: PageCompose::getComposer());
+            return new CreateUserHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository());
 
         } else if ($req->method === "GET" && $req->path === "/user/signin") {
             return new GetSignInPageHandler(compose: PageCompose::getComposer());
