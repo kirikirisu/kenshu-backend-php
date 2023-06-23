@@ -19,10 +19,13 @@ interface HTMLBuilderInterface
 
     /**
      * @param DetailPostDto $post
+     * @param IndexImageDto[] $image_list
+     * @param IndexTagDto[] $tag_list
+     * @param int[] $checked_tag_id_list
      * @param array|null $error_list
      * @return $this
      */
-    public function postEditPage(DetailPostDto $post, array $error_list = null): self;
+    public function postEditPage(DetailPostDto $post, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self;
 
     public function getHtml(): string;
 }

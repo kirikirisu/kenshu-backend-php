@@ -9,16 +9,6 @@ use App\Model\Dto\IndexImageDto;
 use App\Model\Dto\IndexTagDto;
 use App\Model\Dto\ShowPostDto;
 
-class UIMaterial
-{
-    public
-    function __construct(
-        public string $slot_name,
-        public string $replacement)
-    {
-    }
-}
-
 class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
@@ -85,17 +75,22 @@ class HTMLBuilder implements HTMLBuilderInterface
 
     /**
      * @param DetailPostDto $post
+     * @param IndexImageDto[] $image_list
+     * @param IndexTagDto[] $tag_list
+     * @param int[] $checked_tag_id_list
      * @param array|null $error_list
      * @return $this
      */
-    public function postEditPage(DetailPostDto $post, array $error_list = null): self
+    public function postEditPage(DetailPostDto $post, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
         $body_replaced = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
-        $tag_list = self::createCheckboxList($post->tag_list);
-        $tag_list_replaced = str_replace("%tag_list%", $tag_list, $body_replaced);
-        $this->page = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
+        $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
+        $tag_list_replaced = str_replace("%tag_list%", $tag_list_fragment, $body_replaced);
+        $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
+        $image_list_replaced = str_replace("%image_list%", $image_list_fragment, $tag_list_replaced);
+        $this->page = str_replace("%body%", htmlspecialchars($post->body), $image_list_replaced);
 
         if ($error_list) {
             foreach ($error_list as $error) {
@@ -119,17 +114,24 @@ class HTMLBuilder implements HTMLBuilderInterface
     }
 
     /**
-     * @param string[] $checkbox_list
+     * @param IndexTagDto[] $checkbox_list
+     * @param int[] $checked_tag_id_list
      * @return string
      */
-    public static function createCheckboxList(array $checkbox_list): string
+    public static function createCheckboxList(array $checkbox_list, array|null $checked_tag_id_list): string
     {
         $checkbox_part = file_get_contents(dirname(__DIR__) . '/view/html/part/checkbox.html');
 
         $fragment = "";
         foreach ($checkbox_list as $checkbox) {
-            $id_replaced = $fragment + str_replace(search: "%id%", replace: $checkbox->id, subject: $checkbox_part);
-            $fragment = $fragment + str_replace(search: "%tag_name%", replace: $checkbox->name, subject: $id_replaced);
+            $id_replaced = str_replace(search: "%id%", replace: $checkbox->id, subject: $checkbox_part);
+            $name_replaced = str_replace(search: "%tag_name%", replace: $checkbox->name, subject: $id_replaced);
+
+            if (in_array($checkbox->id, $checked_tag_id_list) && !is_null($checked_tag_id_list)) {
+               $fragment = $fragment . str_replace(search: "%checked%", replace: "checked", subject: $name_replaced);
+            } else {
+                $fragment = $fragment . str_replace(search: "%checked%", replace: "", subject: $name_replaced);
+            }
         }
 
         return $fragment;

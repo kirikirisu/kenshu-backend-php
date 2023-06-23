@@ -38,7 +38,7 @@ class Route
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
-            return new GetPostEditPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(), tag_repo: new TagRepository());
+            return new GetPostEditPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(), image_repo: new ImageRepository(), tag_repo: new TagRepository());
 
         } else if ($req->method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
