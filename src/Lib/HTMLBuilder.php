@@ -90,7 +90,7 @@ class HTMLBuilder implements HTMLBuilderInterface
         $tag_list_replaced = str_replace("%tag_list%", $tag_list_fragment, $body_replaced);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
         $image_list_replaced = str_replace("%image_list%", $image_list_fragment, $tag_list_replaced);
-        $this->page = str_replace("%body%", htmlspecialchars($post->body), $image_list_replaced);
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $image_list_replaced);
 
         if ($error_list) {
             foreach ($error_list as $error) {

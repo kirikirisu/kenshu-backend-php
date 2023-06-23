@@ -2,13 +2,11 @@
 
 namespace App\Handler;
 
-use App\Lib\Error\InputError;
-use App\Lib\HTMLBuilder;
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
+use App\Lib\Manager\CsrfManager;
 use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\ShowPostDto;
 use App\Model\Dto\UpdatePostDto;
 use App\Repository\PostRepositoryInterface;
 
@@ -25,11 +23,14 @@ class UpdatePostHandler implements HandlerInterface
 
     public function run(): Response
     {
+        if (!CsrfManager::validate($this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: "g");
-        if (count($error_list) > 0) return static::createEditPageWithError(compose: $this->compose, post: new ShowPostDto(id: $this->post_id, user_id: 2, title: $title, body: $body, thumbnail_id: 1), error_list: $error_list);
+        // TODO
+        if (count($error_list) > 0) return new Response(status_code: OK_STATUS_CODE, html: "<div>更新に失敗しました。</div>");
 
 
         $dto = new UpdatePostDto(title: $title, body: $body, thumbnail_id: 1);
@@ -37,19 +38,6 @@ class UpdatePostHandler implements HandlerInterface
 
         $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
-    }
-
-    /**
-     * @param HTMLBuilder $compose
-     * @param ShowPostDto $post
-     * @param InputError[] $error_list
-     * @return Response
-     */
-    public static function createEditPageWithError(HTMLBuilder $compose, ShowPostDto $post, array $error_list): Response
-    {
-        $html = $compose->postEditPage(post: $post, error_list: $error_list)->getHtml();
-
-        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 
 }

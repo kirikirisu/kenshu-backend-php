@@ -34,11 +34,13 @@ class Route
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
             $pdo = PgConnect::getClient();
-            return new GetPostDetailPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(), image_repo: new ImageRepository(), tag_repo: new TagRepository());
+            return new GetPostDetailPageHandler(pdo: $pdo, post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), tag_repo: new TagRepository(pdo: $pdo));
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
+            session_start();
             $post_id = (int)$match[1];
-            return new GetPostEditPageHandler(post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(), image_repo: new ImageRepository(), tag_repo: new TagRepository());
+            $pdo = PgConnect::getClient();
+            return new GetPostEditPageHandler(pdo: $pdo, post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), tag_repo: new TagRepository(pdo: $pdo));
 
         } else if ($req->method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
