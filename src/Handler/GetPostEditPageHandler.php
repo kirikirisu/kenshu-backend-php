@@ -3,9 +3,7 @@
 namespace App\Handler;
 
 use App\Lib\HTMLBuilderInterface;
-use App\Lib\Http\Request;
 use App\Lib\Http\Response;
-use App\Lib\Manager\CsrfManager;
 use App\Repository\ImageRepositoryInterface;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
