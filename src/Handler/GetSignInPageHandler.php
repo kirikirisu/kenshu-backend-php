@@ -13,6 +13,7 @@ class GetSignInPageHandler implements HandlerInterface
 
     public function run(): Response
     {
-        return new Response(status_code: OK_STATUS_CODE, html: "<div>dummy page</div>");
+        $html = $this->compose->signInPage()->getHtml();
+        return new Response(status_code: OK_STATUS_CODE, html: $html);
     }
 }

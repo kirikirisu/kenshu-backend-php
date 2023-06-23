@@ -108,9 +108,15 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $this;
     }
 
-    public function userSignUpPage(): self
+    public function signUpPage(): self
     {
-        $this->page = file_get_contents(dirname(__DIR__) . '/view/html/page/signup-user.html');
+        $this->page = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
+        return $this;
+    }
+
+    public function signInPage(): self
+    {
+        $this->page = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
         return $this;
     }
 
