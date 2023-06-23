@@ -10,6 +10,10 @@ use App\Handler\GetTopPageHandler;
 use App\Handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
 use App\Handler\UpdatePostHandler;
+use App\Handler\GetSignUpPageHandler;
+use App\Handler\GetSignInPageHandler;
+use App\Handler\CreateUserHandler;
+use App\Handler\SignInUserHandler;
 use App\Lib\Http\Request;
 use App\Lib\Singleton\PageCompose;
 use App\Lib\Singleton\PgConnect;
@@ -50,7 +54,20 @@ class Route
             $post_id = (int)$match[1];
             return new DeletePostHandler(post_id: $post_id, post_client: new PostRepository());
 
+        } else if ($req->method === "GET" && $req->path === "/user/signup") {
+            return new GetSignUpPageHandler(compose: PageCompose::getComposer());
+
+        } else if ($req->method === "POST" && $req->path === "/user/signup") {
+            return new CreateUserHandler(compose: PageCompose::getComposer());
+
+        } else if ($req->method === "GET" && $req->path === "/user/signin") {
+            return new GetSignInPageHandler(compose: PageCompose::getComposer());
+
+        } else if ($req->method === "POST" && $req->path === "/user/signin") {
+            return new SignInUserHandler(compose: PageCompose::getComposer());
+
         }
+
         return new NotFoundHandler();
     }
 }
