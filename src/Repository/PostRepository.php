@@ -69,12 +69,11 @@ class PostRepository implements PostRepositoryInterface
 
     public function updatePost(int $post_id, UpdatePostDto $dto): void
     {
-        $query = "UPDATE posts SET title = :title, body = :body, thumbnail_id = :thumbnail_id WHERE id = :id";
+        $query = "UPDATE posts SET title = :title, body = :body WHERE id = :id";
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $post_id);
         $stmt->bindParam(":title", $dto->title);
         $stmt->bindParam(":body", $dto->body);
-        $stmt->bindParam(":thumbnail_id", $dto->thumbnail_id);
         $stmt->execute();
     }
 

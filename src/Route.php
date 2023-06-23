@@ -42,8 +42,9 @@ class Route
             return new GetPostEditPageHandler(pdo: $pdo, post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), tag_repo: new TagRepository(pdo: $pdo));
 
         } else if ($req->method === "PATCH" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
+            session_start();
             $post_id = (int)$match[1];
-            return new UpdatePostHandler(req: $req, post_id: $post_id, compose: PageCompose::getComposer(), post_client: new PostRepository());
+            return new UpdatePostHandler(req: $req, post_id: $post_id, compose: PageCompose::getComposer(), post_repo: new PostRepository());
 
         } else if ($req->method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
