@@ -42,7 +42,17 @@
 			</div>
 		</div>
 		%invalid_body%
-		<input hidden id="_method" name="_method" value="PATCH" />
+
+		<div class="font-semibold mt-6">タグ</div>
+		<div>
+			%tag_list%
+		</div>
+		<div class="font-semibold mt-6">画像</div>
+		<div class="flex">
+			%image_list%
+		</div>
+		<input hidden id="_method" name="_method" value="PATCH"/>
+		<input id="csrf" type="text" name="csrf" hidden value="%csrf%"/>
 		<button
 				type="submit"
 				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"

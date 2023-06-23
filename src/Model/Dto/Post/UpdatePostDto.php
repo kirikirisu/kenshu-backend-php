@@ -1,11 +1,9 @@
 <?php
-namespace App\Model\Dto;
+namespace App\Model\Dto\Post;
 
-class ShowPostDto
+class UpdatePostDto
 {
     public function __construct(
-        public int    $id,
-        public int    $user_id,
         public string $title,
         public string $body,
         public int $thumbnail_id)
