@@ -3,17 +3,17 @@
 namespace App;
 
 use App\Handler\CreatePostHandler;
+use App\Handler\CreateUserHandler;
 use App\Handler\DeletePostHandler;
 use App\Handler\GetPostDetailPageHandler;
 use App\Handler\GetPostEditPageHandler;
+use App\Handler\GetSignInPageHandler;
+use App\Handler\GetSignUpPageHandler;
 use App\Handler\GetTopPageHandler;
 use App\Handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
-use App\Handler\UpdatePostHandler;
-use App\Handler\GetSignUpPageHandler;
-use App\Handler\GetSignInPageHandler;
-use App\Handler\CreateUserHandler;
 use App\Handler\SignInUserHandler;
+use App\Handler\UpdatePostHandler;
 use App\Lib\Http\Request;
 use App\Lib\Singleton\PageCompose;
 use App\Lib\Singleton\PgConnect;
@@ -58,7 +58,7 @@ class Route
             return new GetSignUpPageHandler(compose: PageCompose::getComposer());
 
         } else if ($req->method === "POST" && $req->path === "/user/signup") {
-            return new CreateUserHandler(compose: PageCompose::getComposer());
+            return new CreateUserHandler(req: $req, compose: PageCompose::getComposer());
 
         } else if ($req->method === "GET" && $req->path === "/user/signin") {
             return new GetSignInPageHandler(compose: PageCompose::getComposer());
