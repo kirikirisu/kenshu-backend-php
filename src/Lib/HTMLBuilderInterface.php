@@ -1,9 +1,9 @@
 <?php
 namespace App\Lib;
 
-use App\Model\Dto\DetailPostDto;
-use App\Model\Dto\IndexImageDto;
-use App\Model\Dto\IndexTagDto;
+use App\Model\Dto\Post\DetailPostDto;
+use App\Model\Dto\Image\IndexImageDto;
+use App\Model\Dto\Tag\IndexTagDto;
 
 interface HTMLBuilderInterface
 {

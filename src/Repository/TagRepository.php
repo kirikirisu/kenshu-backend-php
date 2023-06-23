@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
-use App\Model\Dto\IndexTagDto;
+use App\Model\Dto\Tag\IndexTagDto;
 
 class TagRepository implements TagRepositoryInterface
 {
@@ -50,5 +50,22 @@ class TagRepository implements TagRepositoryInterface
         }
 
         return $tag_list;
+    }
+
+    /**
+     * @param int $post_id
+     * @param int[] $tag_list
+     * @return void
+     */
+    public function insertMultiTag(int $post_id, array $tag_list): void
+    {
+        $query = "INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)";
+        $stmt = $this->pdo->prepare($query);
+
+        foreach ($tag_list as $category) {
+            $stmt->bindParam(1, $post_id);
+            $stmt->bindParam(2, $category);
+            $stmt->execute();
+        }
     }
 }

@@ -7,7 +7,7 @@ use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Manager\CsrfManager;
 use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\UpdatePostDto;
+use App\Model\Dto\Post\UpdatePostDto;
 use App\Repository\PostRepositoryInterface;
 
 class UpdatePostHandler implements HandlerInterface

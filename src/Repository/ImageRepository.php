@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
-use App\Model\Dto\IndexImageDto;
+use App\Model\Dto\Image\IndexImageDto;
 
 class ImageRepository implements ImageRepositoryInterface
 {

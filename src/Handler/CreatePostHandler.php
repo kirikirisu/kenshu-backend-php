@@ -10,10 +10,10 @@ use App\Lib\Http\Response;
 use App\Lib\Manager\CsrfManager;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\IndexPostDto;
-use App\Model\Dto\StoredImageDto;
+use App\Model\Dto\Post\IndexPostDto;
+use App\Model\Dto\Image\StoredImageDto;
 use App\Repository\ImageRepositoryInterface;
-use App\Repository\PostCategoryRepositoryInterface;
+use App\Repository\TagRepositoryInterface;
 use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
 
@@ -27,7 +27,7 @@ class CreatePostHandler implements HandlerInterface
         public HTMLBuilderInterface            $compose,
         public PostRepositoryInterface         $post_repo,
         public ImageRepositoryInterface        $image_repo,
-        public PostCategoryRepositoryInterface $post_category_repo)
+        public TagRepositoryInterface $tag_repo)
     {
     }
 
@@ -57,7 +57,7 @@ class CreatePostHandler implements HandlerInterface
             $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);
             $this->post_repo->updateThumbnail(post_id: $post_id, thumbnail_id: $img_id);
 
-            $this->post_category_repo->insertMultiCategory(post_id: $post_id, category_list: $category_list);
+            $this->tag_repo->insertMultiTag(post_id: $post_id, tag_list: $category_list);
             $this->image_repo->insertMultiImageForPost(post_id: $post_id, image_list: $stored_img_binary->stored_img_uri_list);
             $this->pdo->commit();
         } catch (\PDOException $e) {

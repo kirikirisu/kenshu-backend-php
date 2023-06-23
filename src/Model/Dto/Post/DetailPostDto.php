@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Model\Dto;
+namespace App\Model\Dto\Post;
 
 class DetailPostDto
 {

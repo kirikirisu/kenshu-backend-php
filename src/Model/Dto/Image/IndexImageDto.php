@@ -1,5 +1,5 @@
 <?php
-namespace App\Model\Dto;
+namespace App\Model\Dto\Image;
 
 class IndexImageDto
 {

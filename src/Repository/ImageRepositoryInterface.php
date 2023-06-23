@@ -1,7 +1,7 @@
 <?php
 namespace App\Repository;
 
-use App\Model\Dto\IndexImageDto;
+use App\Model\Dto\Image\IndexImageDto;
 
 interface ImageRepositoryInterface
 {

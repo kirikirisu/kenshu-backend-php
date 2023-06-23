@@ -2,13 +2,12 @@
 
 namespace App\Repository;
 
-use App\Lib\Helper\MarchalArrayFromObjectString;
 use App\Lib\Helper\PDOHelper;
 use App\Lib\Singleton\PgConnect;
-use App\Model\Dto\DetailPostDto;
-use App\Model\Dto\IndexPostDto;
-use App\Model\Dto\ShowPostDto;
-use App\Model\Dto\UpdatePostDto;
+use App\Model\Dto\Post\DetailPostDto;
+use App\Model\Dto\Post\IndexPostDto;
+use App\Model\Dto\Post\ShowPostDto;
+use App\Model\Dto\Post\UpdatePostDto;
 
 class PostRepository implements PostRepositoryInterface
 {

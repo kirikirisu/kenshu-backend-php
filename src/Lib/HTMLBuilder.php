@@ -4,10 +4,10 @@ namespace App\Lib;
 
 use App\Lib\Error\InputError;
 use App\Lib\Manager\CsrfManager;
-use App\Model\Dto\DetailPostDto;
-use App\Model\Dto\IndexImageDto;
-use App\Model\Dto\IndexTagDto;
-use App\Model\Dto\ShowPostDto;
+use App\Model\Dto\Post\DetailPostDto;
+use App\Model\Dto\Image\IndexImageDto;
+use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Post\ShowPostDto;
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
