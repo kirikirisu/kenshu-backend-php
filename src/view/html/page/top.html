@@ -44,6 +44,10 @@
 				reader.readAsDataURL(file)
 			}
 		}
+
+		const goSignInPage = () => {
+			window.location.replace("http://localhost:8080/user/signin");
+		}
 	</script>
 </head>
 <body class="mx-auto max-w-4xl">
@@ -52,11 +56,20 @@
 </header>
 <main>
 	<form action="/user/signout" method="post" enctype="multipart/form-data" class="mb-10">
+		<!-- TODO: Display only when user is logged in -->
 		<button
 				type="submit"
 				class="mt-5 bg-orange-600 hover:bg-orange-800 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"
 		>
 			Sing out
+		</button>
+		<!-- TODO: Display only when user is not logged in -->
+		<button
+				type="button"
+				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"
+				onclick="goSignInPage()"
+		>
+			Sign in
 		</button>
 	</form>
 	<form action="/" method="post" enctype="multipart/form-data" class="w-2/5">
