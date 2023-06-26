@@ -22,7 +22,7 @@ class DeletePostHandler implements HandlerInterface
         if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $post = $this->post_repo->getPostById(id: $this->post_id);
-        if ($post->user_id !== $user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+        if ($post->user_id !== (int)$user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $this->post_repo->deletePost($this->post_id);
 
