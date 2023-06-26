@@ -69,7 +69,7 @@ class Route
 
         } else if ($req->method === "POST" && $req->path === "/user/signin") {
             session_start();
-            return new SignInUserHandler(compose: PageCompose::getComposer());
+            return new SignInUserHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository());
 
         }
 
