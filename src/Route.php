@@ -51,7 +51,7 @@ class Route
 
         } else if ($req->method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
-            return new DeletePostHandler(post_id: $post_id, session: new SessionManager(), post_client: new PostRepository());
+            return new DeletePostHandler(post_id: $post_id,  session: new SessionManager(), post_repo: new PostRepository());
 
         } else if ($req->method === "GET" && $req->path === "/user/signup") {
             return new GetSignUpPageHandler(session: new SessionManager(), compose: PageCompose::getComposer());

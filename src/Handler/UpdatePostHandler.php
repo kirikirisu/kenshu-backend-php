@@ -37,6 +37,9 @@ class UpdatePostHandler implements HandlerInterface
         // TODO
         if (count($error_list) > 0) return new Response(status_code: OK_STATUS_CODE, html: "<div>更新に失敗しました。</div>");
 
+        $post = $this->post_repo->getPostById(id: $this->post_id);
+        if ($post->user_id !== $user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+
         // TODO: editable thumbnail, tags, images
         $dto = new UpdatePostDto(title: $title, body: $body);
         $this->post_repo->updatePost($this->post_id, $dto);
