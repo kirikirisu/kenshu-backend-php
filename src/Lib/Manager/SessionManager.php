@@ -40,6 +40,7 @@ class SessionManager implements SessionManagerInterface
     public function findValueByKey($key): mixed
     {
         if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (!isset($_SESSION[$key])) return null;
 
         return $_SESSION[$key];
     }

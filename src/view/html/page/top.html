@@ -51,6 +51,14 @@
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
+	<form action="/user/signout" method="post" enctype="multipart/form-data" class="mb-10">
+		<button
+				type="submit"
+				class="mt-5 bg-orange-600 hover:bg-orange-800 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"
+		>
+			Sing out
+		</button>
+	</form>
 	<form action="/" method="post" enctype="multipart/form-data" class="w-2/5">
 		<label for="post-title" class="block text-base font-semibold"
 		>タイトル</label

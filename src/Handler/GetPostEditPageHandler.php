@@ -26,6 +26,8 @@ class GetPostEditPageHandler implements HandlerInterface
     public function run(): Response
     {
         $this->session->beginSession();
+        $user_id = $this->session->findValueByKey('user_id');
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized.</div>");
 
         try {
             $this->pdo->beginTransaction();

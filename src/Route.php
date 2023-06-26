@@ -14,6 +14,7 @@ use App\Handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
 use App\Handler\SignInUserHandler;
 use App\Handler\UpdatePostHandler;
+use App\Handler\SignOutUserHandler;
 use App\Lib\Http\Request;
 use App\Lib\Manager\SessionManager;
 use App\Lib\Singleton\PageCompose;
@@ -50,7 +51,7 @@ class Route
 
         } else if ($req->method === "DELETE" && preg_match("|\A/posts/([0-9]+)/edit\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];
-            return new DeletePostHandler(post_id: $post_id, post_client: new PostRepository());
+            return new DeletePostHandler(post_id: $post_id, session: new SessionManager(), post_client: new PostRepository());
 
         } else if ($req->method === "GET" && $req->path === "/user/signup") {
             return new GetSignUpPageHandler(session: new SessionManager(), compose: PageCompose::getComposer());
@@ -63,6 +64,9 @@ class Route
 
         } else if ($req->method === "POST" && $req->path === "/user/signin") {
             return new SignInUserHandler(req: $req, session: new SessionManager(), compose: PageCompose::getComposer(), user_repo: new UserRepository());
+
+        } else if ($req->method === "POST" && $req->path === "/user/signout") {
+            return new SignOutUserHandler(session: new SessionManager());
 
         }
 
