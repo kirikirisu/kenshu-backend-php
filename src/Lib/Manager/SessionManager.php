@@ -23,6 +23,7 @@ class SessionManager implements SessionManagerInterface
      */
     public function getSessionId(): string
     {
+        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
         if (!session_id()) throw new Exception("session id not found.");
 
         return session_id();
@@ -41,5 +42,28 @@ class SessionManager implements SessionManagerInterface
         if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
 
         return $_SESSION[$key];
+    }
+
+    public function destroy(): void
+    {
+        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        session_destroy();
+    }
+
+    public function regenerateId(): void
+    {
+        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        session_regenerate_id(true);
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    public function getSessionName(): string
+    {
+        if (!session_name()) throw new Exception("session name not found.");
+
+        return session_name();
     }
 }

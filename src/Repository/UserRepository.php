@@ -3,8 +3,8 @@
 namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
-use App\Model\Dto\User\IndexUserDto;
 use App\Model\Dto\User\DetailUserDto;
+use App\Model\Dto\User\IndexUserDto;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -27,7 +27,19 @@ class UserRepository implements UserRepositoryInterface
         return $result['id'];
     }
 
-    public function findUserByEmail(string $email): DetailUserDto | null
+    public function findUserById(int $user_id): DetailUserDto
+    {
+        $query = "SELECT * FROM users WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(":id", $user_id);
+        $stmt->execute();
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        var_dump($result);
+        return new DetailUserDto(id: $result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
+    }
+
+    public function findUserByEmail(string $email): DetailUserDto|null
     {
         $query = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->pdo->prepare($query);
@@ -39,5 +51,4 @@ class UserRepository implements UserRepositoryInterface
 
         return new DetailUserDto(id: $result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
     }
-
 }

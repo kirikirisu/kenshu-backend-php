@@ -26,6 +26,8 @@ class UpdatePostHandler implements HandlerInterface
     public function run(): Response
     {
         $this->session->beginSession();
+        $user_id = $this->session->findValueByKey("user_id");
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
         if (!CsrfManager::validate(session: $this->session, token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $title = $this->req->post['post-title'];

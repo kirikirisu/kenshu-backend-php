@@ -32,7 +32,7 @@ class Route
 
         } else if ($req->method === "POST" && $req->path === "/") {
             $pdo = PgConnect::getClient();
-            return new CreatePosthandler(req: $req, pdo: $pdo, session: new SessionManager(), compose: PageCompose::getComposer(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), tag_repo: new TagRepository(pdo: $pdo));
+            return new CreatePosthandler(req: $req, pdo: $pdo, session: new SessionManager(), compose: PageCompose::getComposer(), user_repo: new UserRepository(), post_repo: new PostRepository(pdo: $pdo), image_repo: new ImageRepository(pdo: $pdo), tag_repo: new TagRepository(pdo: $pdo));
 
         } else if ($req->method === "GET" && preg_match("|\A/posts/([0-9]+)\z|u", $req->path, $match)) {
             $post_id = (int)$match[1];

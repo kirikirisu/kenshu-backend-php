@@ -18,6 +18,7 @@ class GetSignUpPageHandler implements HandlerInterface
     public function run(): Response
     {
         $this->session->beginSession();
+        if ($this->session->findValueByKey("user_id")) return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: HOST_BASE_URL);
 
         $html = $this->compose->signUpPage(csrf_token: CsrfManager::generate($this->session))->getHtml();
 

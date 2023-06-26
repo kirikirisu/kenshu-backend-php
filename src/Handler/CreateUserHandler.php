@@ -26,6 +26,7 @@ class CreateUserHandler implements HandlerInterface
         $this->session->beginSession();
         if (!CsrfManager::validate(session: $this->session, token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
+
         $name = $this->req->post['name'];
         $mail = $this->req->post['mail'];
         $raw_password = $this->req->post['password'];

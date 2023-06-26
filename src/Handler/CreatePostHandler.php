@@ -17,6 +17,7 @@ use App\Repository\ImageRepositoryInterface;
 use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
+use App\Repository\UserRepository;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
@@ -27,6 +28,7 @@ class CreatePostHandler implements HandlerInterface
         public \PDO                     $pdo,
         public SessionManagerInterface  $session,
         public HTMLBuilderInterface     $compose,
+        public UserRepository           $user_repo,
         public PostRepositoryInterface  $post_repo,
         public ImageRepositoryInterface $image_repo,
         public TagRepositoryInterface   $tag_repo)
@@ -36,6 +38,8 @@ class CreatePostHandler implements HandlerInterface
     public function run(): Response
     {
         $this->session->beginSession();
+        $user_id = $this->session->findValueByKey("user_id");
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
@@ -57,7 +61,6 @@ class CreatePostHandler implements HandlerInterface
         try {
             $this->pdo->beginTransaction();
 
-            $user_id = 8;
             $payload = new IndexPostDto(user_id: $user_id, title: $title, body: $body);
             $post_id = $this->post_repo->insertPost($payload);
             $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);

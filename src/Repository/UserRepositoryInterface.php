@@ -8,5 +8,7 @@ interface UserRepositoryInterface
 {
     public function insertUser(IndexUserDto $payload): int;
 
+    public function findUserById(int $user_id): DetailUserDto;
+
     public function findUserByEmail(string $email): DetailUserDto | null;
 }

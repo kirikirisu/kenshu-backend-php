@@ -21,6 +21,7 @@ class SignInUserHandler implements HandlerInterface
 
     public function run(): Response
     {
+        $this->session->beginSession();
         if (!CsrfManager::validate(session: $this->session, token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $mail = $this->req->post['mail'];
