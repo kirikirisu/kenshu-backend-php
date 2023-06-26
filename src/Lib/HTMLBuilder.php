@@ -15,9 +15,10 @@ class HTMLBuilder implements HTMLBuilderInterface
 
     /**
      * @param ShowPostDto[] $data_chunk
+     * @param string $csrf_token ;
      * @param InputError[] $error_list
      */
-    public function topPage(array $data_chunk, array $error_list = null): self
+    public function topPage(array $data_chunk, string $csrf_token, array $error_list = null): self
     {
         $top_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/top.html');
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
@@ -34,7 +35,7 @@ class HTMLBuilder implements HTMLBuilderInterface
         }
 
         $replaced_post_list = str_replace("%post_list%", $post_list_fragment, $top_page_base_html);
-        $this->page = str_replace("%csrf%", CsrfManager::generate(), $replaced_post_list);
+        $this->page = str_replace("%csrf%", $csrf_token, $replaced_post_list);
 
         if ($error_list) {
             foreach ($error_list as $error) {
@@ -75,13 +76,14 @@ class HTMLBuilder implements HTMLBuilderInterface
 
     /**
      * @param DetailPostDto $post
+     * @param string $csrf_token
      * @param IndexImageDto[] $image_list
      * @param IndexTagDto[] $tag_list
      * @param int[] $checked_tag_id_list
      * @param array|null $error_list
      * @return $this
      */
-    public function postEditPage(DetailPostDto $post, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
+    public function postEditPage(DetailPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
         $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
@@ -90,7 +92,7 @@ class HTMLBuilder implements HTMLBuilderInterface
         $tag_list_replaced = str_replace("%tag_list%", $tag_list_fragment, $body_replaced);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
         $image_list_replaced = str_replace("%image_list%", $image_list_fragment, $tag_list_replaced);
-        $this->page = str_replace("%csrf%", CsrfManager::generate(), $image_list_replaced);
+        $this->page = str_replace("%csrf%", $csrf_token, $image_list_replaced);
 
         if ($error_list) {
             foreach ($error_list as $error) {
@@ -108,17 +110,17 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $this;
     }
 
-    public function signUpPage(): self
+    public function signUpPage(string $csrf_token): self
     {
         $user_signup_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
-        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signup_base);
+        $this->page = str_replace("%csrf%", $csrf_token, $user_signup_base);
         return $this;
     }
 
-    public function signInPage(): self
+    public function signInPage(string $csrf_token): self
     {
         $user_signin_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
-        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signin_base);
+        $this->page = str_replace("%csrf%", $csrf_token, $user_signin_base);
 
         return $this;
     }

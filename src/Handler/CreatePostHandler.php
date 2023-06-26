@@ -8,38 +8,42 @@ use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Manager\CsrfManager;
+use App\Lib\Manager\SessionManagerInterface;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
-use App\Model\Dto\Post\IndexPostDto;
 use App\Model\Dto\Image\StoredImageDto;
+use App\Model\Dto\Post\IndexPostDto;
 use App\Repository\ImageRepositoryInterface;
-use App\Repository\TagRepositoryInterface;
 use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
+use App\Repository\TagRepositoryInterface;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
 class CreatePostHandler implements HandlerInterface
 {
     public function __construct(
-        public Request                         $req,
-        public \PDO                            $pdo,
-        public HTMLBuilderInterface            $compose,
-        public PostRepositoryInterface         $post_repo,
-        public ImageRepositoryInterface        $image_repo,
-        public TagRepositoryInterface $tag_repo)
+        public Request                  $req,
+        public \PDO                     $pdo,
+        public SessionManagerInterface  $session,
+        public HTMLBuilderInterface     $compose,
+        public PostRepositoryInterface  $post_repo,
+        public ImageRepositoryInterface $image_repo,
+        public TagRepositoryInterface   $tag_repo)
     {
     }
 
     public function run(): Response
     {
+        $this->session->beginSession();
+
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
         $main_image = $this->req->post['main-image'];
         $image_list = $this->req->files['images'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
-        if (!CsrfManager::validate($this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+        if (!CsrfManager::validate(session: $this->session, token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
@@ -52,7 +56,9 @@ class CreatePostHandler implements HandlerInterface
 
         try {
             $this->pdo->beginTransaction();
-            $payload = new IndexPostDto(user_id: 2, title: $title, body: $body);
+
+            $user_id = 8;
+            $payload = new IndexPostDto(user_id: $user_id, title: $title, body: $body);
             $post_id = $this->post_repo->insertPost($payload);
             $img_id = $this->image_repo->insertImage(post_id: $post_id, img_path: $stored_img_binary->thumbnail_uri);
             $this->post_repo->updateThumbnail(post_id: $post_id, thumbnail_id: $img_id);

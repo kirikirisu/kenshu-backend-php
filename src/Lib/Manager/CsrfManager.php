@@ -5,16 +5,16 @@ class CsrfManager
 {
     const HASH_ALGO = 'sha256';
 
-    public static function generate(): string
+    public static function generate(SessionManager $session): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
+        if ($session->status() === PHP_SESSION_NONE) {
             throw new \BadMethodCallException('Session is not active.');
         }
-        return hash(self::HASH_ALGO, session_id());
+        return hash(self::HASH_ALGO, $session->getSessionId());
     }
 
-    public static function validate($token): bool
+    public static function validate(SessionManager $session, string $token): bool
     {
-        return self::generate() === $token;
+        return self::generate($session) === $token;
     }
 }

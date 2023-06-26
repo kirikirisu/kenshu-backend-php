@@ -4,6 +4,8 @@ namespace App\Handler;
 
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Response;
+use App\Lib\Manager\CsrfManager;
+use App\Lib\Manager\SessionManagerInterface;
 use App\Repository\ImageRepositoryInterface;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
@@ -12,6 +14,7 @@ class GetPostEditPageHandler implements HandlerInterface
 {
     public function __construct(
         public \PDO                     $pdo,
+        public SessionManagerInterface  $session,
         public int                      $post_id,
         public HTMLBuilderInterface     $compose,
         public PostRepositoryInterface  $post_repo,
@@ -22,6 +25,8 @@ class GetPostEditPageHandler implements HandlerInterface
 
     public function run(): Response
     {
+        $this->session->beginSession();
+
         try {
             $this->pdo->beginTransaction();
             $post = $this->post_repo->getPostById(id: $this->post_id);
@@ -35,7 +40,7 @@ class GetPostEditPageHandler implements HandlerInterface
                 $checked_tag_id_list[] = $tag->id;
             }
 
-            $html = $this->compose->postEditPage(post: $post, image_list: $image_list, tag_list: $tag_list, checked_tag_id_list: $checked_tag_id_list)->getHtml();
+            $html = $this->compose->postEditPage(post: $post, csrf_token: CsrfManager::generate($this->session), image_list: $image_list, tag_list: $tag_list, checked_tag_id_list: $checked_tag_id_list)->getHtml();
 
             return new Response(status_code: OK_STATUS_CODE, html: $html);
 
