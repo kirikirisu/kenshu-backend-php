@@ -56,15 +56,19 @@ class Route
             return new DeletePostHandler(post_id: $post_id, post_client: new PostRepository());
 
         } else if ($req->method === "GET" && $req->path === "/user/signup") {
+            session_start();
             return new GetSignUpPageHandler(compose: PageCompose::getComposer());
 
         } else if ($req->method === "POST" && $req->path === "/user/signup") {
+            session_start();
             return new CreateUserHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository());
 
         } else if ($req->method === "GET" && $req->path === "/user/signin") {
+            session_start();
             return new GetSignInPageHandler(compose: PageCompose::getComposer());
 
         } else if ($req->method === "POST" && $req->path === "/user/signin") {
+            session_start();
             return new SignInUserHandler(compose: PageCompose::getComposer());
 
         }

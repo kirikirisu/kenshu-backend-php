@@ -6,6 +6,7 @@ use App\Lib\Helper\ImageBinaryStoreHelper;
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
+use App\Lib\Manager\CsrfManager;
 use App\Model\Dto\User\IndexUserDto;
 use App\Repository\UserRepositoryInterface;
 
@@ -20,6 +21,8 @@ class CreateUserHandler implements HandlerInterface
 
     public function run(): Response
     {
+        if (!CsrfManager::validate($this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+
         $name = $this->req->post['name'];
         $mail = $this->req->post['mail'];
         $password = $this->req->post['password'];

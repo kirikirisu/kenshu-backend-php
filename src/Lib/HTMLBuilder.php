@@ -110,13 +110,16 @@ class HTMLBuilder implements HTMLBuilderInterface
 
     public function signUpPage(): self
     {
-        $this->page = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
+        $user_signup_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signup_base);
         return $this;
     }
 
     public function signInPage(): self
     {
-        $this->page = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
+        $user_signin_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signin_base);
+
         return $this;
     }
 
