@@ -31,11 +31,15 @@ class SessionManager implements SessionManagerInterface
     // sessionId の session に key, valueで値をセット
     public function setValue(string $key, string $value): void
     {
+        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+
         $_SESSION[$key] = $value;
     }
 
     public function findValueByKey($key): mixed
     {
+        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+
         return $_SESSION[$key];
     }
 }
