@@ -157,10 +157,10 @@ class HTMLBuilder implements HTMLBuilderInterface
 
         $fragment = "";
         foreach ($checkbox_list as $checkbox) {
-            $ui_material_list = array(
+            $ui_material_list = [
                 new UIMaterial(slot: "id", replacement: $checkbox->id),
                 new UIMaterial(slot: "tag_name", replacement: $checkbox->name),
-            );
+            ];
 
             if (in_array($checkbox->id, $checked_tag_id_list) && !is_null($checked_tag_id_list)) {
                 $ui_material_list[] = new UIMaterial(slot: "checked", replacement: "checked");
