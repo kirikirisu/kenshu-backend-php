@@ -27,5 +27,9 @@ interface HTMLBuilderInterface
      */
     public function postEditPage(DetailPostDto $post, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self;
 
+    public function signUpPage(): self;
+
+    public function signInPage(): self;
+
     public function getHtml(): string;
 }

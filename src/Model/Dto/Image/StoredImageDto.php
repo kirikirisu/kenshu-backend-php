@@ -1,6 +1,7 @@
 <?php
 namespace App\Model\Dto\Image;
 
+// TODO: rename to StoredMultiImageDto
 class StoredImageDto
 {
     public function __construct(

@@ -4,10 +4,10 @@ namespace App\Lib;
 
 use App\Lib\Error\InputError;
 use App\Lib\Manager\CsrfManager;
-use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Image\IndexImageDto;
-use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
+use App\Model\Dto\Tag\IndexTagDto;
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
@@ -108,6 +108,21 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $this;
     }
 
+    public function signUpPage(): self
+    {
+        $user_signup_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signup_base);
+        return $this;
+    }
+
+    public function signInPage(): self
+    {
+        $user_signin_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
+        $this->page = str_replace("%csrf%", CsrfManager::generate(), $user_signin_base);
+
+        return $this;
+    }
+
     public function getHtml(): string
     {
         return $this->page;
@@ -128,7 +143,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             $name_replaced = str_replace(search: "%tag_name%", replace: $checkbox->name, subject: $id_replaced);
 
             if (in_array($checkbox->id, $checked_tag_id_list) && !is_null($checked_tag_id_list)) {
-               $fragment = $fragment . str_replace(search: "%checked%", replace: "checked", subject: $name_replaced);
+                $fragment = $fragment . str_replace(search: "%checked%", replace: "checked", subject: $name_replaced);
             } else {
                 $fragment = $fragment . str_replace(search: "%checked%", replace: "", subject: $name_replaced);
             }
