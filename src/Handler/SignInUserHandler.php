@@ -1,13 +1,16 @@
 <?php
+
 namespace App\Handler;
 
 use App\Lib\HTMLBuilderInterface;
+use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Manager\CsrfManager;
 
 class SignInUserHandler implements HandlerInterface
 {
     public function __construct(
+        public Request              $req,
         public HTMLBuilderInterface $compose)
     {
     }

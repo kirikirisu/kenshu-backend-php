@@ -36,7 +36,7 @@ class UpdatePostHandler implements HandlerInterface
         $dto = new UpdatePostDto(title: $title, body: $body);
         $this->post_repo->updatePost($this->post_id, $dto);
 
-        $redirect_url = "http://localhost:8080/posts/" . $this->post_id;
+        $redirect_url = HOST_BASE_URL . $this->post_id;
         return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
     }
 
