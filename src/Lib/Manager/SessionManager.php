@@ -4,15 +4,14 @@ namespace App\Lib\Manager;
 
 use Exception;
 
-class SessionManager implements SessionManagerInterface
+class SessionManager
 {
-    // なかったらsessionを作成、 そのsessionに紐ずくsessionId の発行、ブラウザのcookieにsessionIdをセット
-    public function beginSession(): void
+    public static function beginSession(): void
     {
         session_start();
     }
 
-    public function status(): int
+    public static function status(): int
     {
         return session_status();
     }
@@ -21,39 +20,38 @@ class SessionManager implements SessionManagerInterface
      * @return string
      * @throws Exception
      */
-    public function getSessionId(): string
+    public static function getSessionId(): string
     {
-        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (self::status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
         if (!session_id()) throw new Exception("session id not found.");
 
         return session_id();
     }
 
-    // sessionId の session に key, valueで値をセット
-    public function setValue(string $key, string $value): void
+    public static function setValue(string $key, string $value): void
     {
-        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (self::status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
 
         $_SESSION[$key] = $value;
     }
 
-    public function findValueByKey($key): mixed
+    public static function findValueByKey($key): mixed
     {
-        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (self::status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
         if (!isset($_SESSION[$key])) return null;
 
         return $_SESSION[$key];
     }
 
-    public function destroy(): void
+    public static function destroy(): void
     {
-        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (self::status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
         session_destroy();
     }
 
-    public function regenerateId(): void
+    public static function regenerateId(): void
     {
-        if ($this->status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
+        if (self::status() === PHP_SESSION_NONE) throw new \BadMethodCallException('Session is not active.');
         session_regenerate_id(true);
     }
 
@@ -61,7 +59,7 @@ class SessionManager implements SessionManagerInterface
      * @return string
      * @throws Exception
      */
-    public function getSessionName(): string
+    public static function getSessionName(): string
     {
         if (!session_name()) throw new Exception("session name not found.");
 
