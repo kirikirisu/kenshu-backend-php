@@ -7,6 +7,7 @@ use App\Lib\HTMLBuilder;
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
+use App\Lib\Http\SessionManager;
 use App\Lib\Manager\CsrfManager;
 use App\Lib\Manager\SessionManagerInterface;
 use App\Lib\Validator\ValidateImageFile;
@@ -26,7 +27,6 @@ class CreatePostHandler implements HandlerInterface
     public function __construct(
         public Request                  $req,
         public \PDO                     $pdo,
-        public SessionManagerInterface  $session,
         public HTMLBuilderInterface     $compose,
         public UserRepositoryInterface  $user_repo,
         public PostRepositoryInterface  $post_repo,
@@ -37,8 +37,8 @@ class CreatePostHandler implements HandlerInterface
 
     public function run(): Response
     {
-        $this->session->beginSession();
-        $user_id = $this->session->findValueByKey("user_id");
+        SessionManager::beginSession();
+        $user_id = SessionManager::findValueByKey("user_id");
         if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $title = $this->req->post['post-title'];
@@ -47,7 +47,7 @@ class CreatePostHandler implements HandlerInterface
         $image_list = $this->req->files['images'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
-        if (!CsrfManager::validate(session: $this->session, token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+        if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);

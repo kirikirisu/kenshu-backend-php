@@ -2,23 +2,24 @@
 
 namespace App\Handler;
 
+use App\Lib\Http\Request;
 use App\Lib\Http\Response;
-use App\Lib\Manager\SessionManagerInterface;
+use App\Lib\Http\SessionManager;
 use App\Repository\PostRepositoryInterface;
 
 class DeletePostHandler implements HandlerInterface
 {
     public function __construct(
         public int                     $post_id,
-        public SessionManagerInterface $session,
+        public Request                 $req,
         public PostRepositoryInterface $post_repo)
     {
     }
 
     public function run(): Response
     {
-        $this->session->beginSession();
-        $user_id = $this->session->findValueByKey("user_id");
+        SessionManager::beginSession();
+        $user_id = SessionManager::findValueByKey("user_id");
         if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $post = $this->post_repo->getPostById(id: $this->post_id);
