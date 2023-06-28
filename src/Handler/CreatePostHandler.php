@@ -17,7 +17,7 @@ use App\Repository\ImageRepositoryInterface;
 use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
-use App\Repository\UserRepository;
+use App\Repository\UserRepositoryInterface;
 
 const PUBLICK_DIR_FOR_IMG = "/assets/images/";
 
@@ -28,7 +28,7 @@ class CreatePostHandler implements HandlerInterface
         public \PDO                     $pdo,
         public SessionManagerInterface  $session,
         public HTMLBuilderInterface     $compose,
-        public UserRepository           $user_repo,
+        public UserRepositoryInterface  $user_repo,
         public PostRepositoryInterface  $post_repo,
         public ImageRepositoryInterface $image_repo,
         public TagRepositoryInterface   $tag_repo)
