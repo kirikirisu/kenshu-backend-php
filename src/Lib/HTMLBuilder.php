@@ -3,11 +3,20 @@
 namespace App\Lib;
 
 use App\Lib\Error\InputError;
-use App\Lib\Manager\CsrfManager;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
+
+class UIMaterial
+{
+    public function __construct(
+        public string $slot,
+        public string $replacement)
+
+    {
+    }
+}
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
@@ -75,6 +84,23 @@ class HTMLBuilder implements HTMLBuilderInterface
     }
 
     /**
+     * @param UIMaterial[] $ui_material_list
+     */
+    public static function  bindData(string $base, array $ui_material_list): string
+    {
+        $fragment = "";
+
+        for ($i = 0; $i < count($ui_material_list); $i++) {
+            $slot = "%" . $ui_material_list[$i]->slot . "%";
+            if ($i === 0) $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $base);
+
+            $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $fragment);
+        }
+
+        return $fragment;
+    }
+
+    /**
      * @param DetailPostDto $post
      * @param string $csrf_token
      * @param IndexImageDto[] $image_list
@@ -86,27 +112,34 @@ class HTMLBuilder implements HTMLBuilderInterface
     public function postEditPage(DetailPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
-        $title_replaced = str_replace("%title%", htmlspecialchars($post->title), $edit_post_page_base_html);
-        $body_replaced = str_replace("%body%", htmlspecialchars($post->body), $title_replaced);
         $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
-        $tag_list_replaced = str_replace("%tag_list%", $tag_list_fragment, $body_replaced);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
-        $image_list_replaced = str_replace("%image_list%", $image_list_fragment, $tag_list_replaced);
-        $this->page = str_replace("%csrf%", $csrf_token, $image_list_replaced);
 
+        $error_ui_material_list = [];
         if ($error_list) {
             foreach ($error_list as $error) {
                 if ($error->field === "title") {
-                    $this->page = str_replace("%invalid_title%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
+                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: '<p class="mt-1 text-pink-600">' . $error->title . '</p>');
                 }
                 if ($error->field === "body") {
-                    $this->page = str_replace("%invalid_body%", '<p class="mt-1 text-pink-600">' . $error->message . "</p>", $this->page);
+                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '<p class="mt-1 text-pink-600">' . $error->title . '</p>');
                 }
             }
+        } else {
+            $error_ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: "");
+            $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: "");
         }
 
-        $this->page = str_replace("%invalid_title%", "", $this->page);
-        $this->page = str_replace("%invalid_body%", "", $this->page);
+        $ui_material_list = array_merge(array(
+            new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
+            new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
+            new UIMaterial(slot: "tag_list", replacement: $tag_list_fragment),
+            new UIMaterial(slot: "image_list", replacement: $image_list_fragment),
+            new UIMaterial(slot: "csrf", replacement: $csrf_token),
+        ), $error_ui_material_list);
+
+        $this->page = self::bindData(base: $edit_post_page_base_html, ui_material_list: $ui_material_list);
+
         return $this;
     }
 
