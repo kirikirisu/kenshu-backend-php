@@ -8,6 +8,7 @@ use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Http\SessionManager;
 use App\Lib\Manager\CsrfManager;
+use App\Lib\Validator\ValidateUser;
 use App\Model\Dto\User\IndexUserDto;
 use App\Repository\UserRepositoryInterface;
 
@@ -30,6 +31,11 @@ class CreateUserHandler implements HandlerInterface
         $raw_password = $this->req->post['password'];
         $avatar = $this->req->files['avatar'];
         //TODO: regular validation, avoid duplicate emails
+        $error_list = ValidateUser::exec(name: $name, mail: $mail, password: $raw_password);
+        if (count($error_list) > 0) {
+            $html = $this->compose->signUpPage(csrf_token: CsrfManager::generate(), error_list: $error_list)->getHtml();
+            return new Response(status_code: OK_STATUS_CODE, html: $html);
+        }
 
         $hashed_password = password_hash($raw_password, PASSWORD_DEFAULT);
         $stored_file_path_list = ImageBinaryStoreHelper::storeToDisk(filename: $avatar['name'], src_file_path: $avatar['tmp_name']);

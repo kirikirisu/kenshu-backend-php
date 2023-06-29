@@ -9,7 +9,6 @@ use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Http\SessionManager;
 use App\Lib\Manager\CsrfManager;
-use App\Lib\Manager\SessionManagerInterface;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\Image\StoredImageDto;

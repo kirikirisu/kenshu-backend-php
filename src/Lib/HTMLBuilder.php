@@ -2,16 +2,23 @@
 
 namespace App\Lib;
 
+use App\Lib\Error\InputError;
+use App\Lib\Struct\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
 use App\Model\Dto\Tag\PostTagListDto;
-use App\Lib\Struct\UIMaterial;
 
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
+
+    public static function cleanRestSlot(string $text): string
+    {
+        $pattern = '/%.*?%/s';
+        return preg_replace($pattern, '', $text);
+    }
 
     /**
      * @param UIMaterial[] $ui_material_list
@@ -27,7 +34,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $fragment);
         }
 
-        return $fragment;
+        return self::cleanRestSlot($fragment);
     }
 
     public static function defineComponent(string $content_path, array $props): string
@@ -35,6 +42,7 @@ class HTMLBuilder implements HTMLBuilderInterface
         $base_html = file_get_contents(dirname(__DIR__) . $content_path);
         return self::mixUiMaterial(base: $base_html, ui_material_list: $props);
     }
+
 
     /**
      * @param ShowPostDto[] $post_list
@@ -140,7 +148,7 @@ class HTMLBuilder implements HTMLBuilderInterface
                 }
             }
         } else {
-            $error_ui_material_list= [
+            $error_ui_material_list = [
                 new UIMaterial(slot: "invalid_title", replacement: ""),
                 new UIMaterial(slot: "invalid_body", replacement: "")
             ];
@@ -151,9 +159,23 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $this;
     }
 
-    public function signUpPage(string $csrf_token): self
+    /**
+     * @param string $csrf_token
+     * @param InputError[]|null $error_list
+     * @return $this
+     */
+    public function signUpPage(string $csrf_token, ?array $error_list = null): self
     {
-        $this->page = self::defineComponent(content_path: '/view/html/page/user-signup.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
+        $error_props = [];
+
+        if (!is_null($error_list)) {
+            foreach ($error_list as $error) {
+                if ($error->field) $error_props[] = new UIMaterial(slot: "invalid_" . $error->field, replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
+            }
+        }
+
+
+        $this->page = self::defineComponent(content_path: '/view/html/page/user-signup.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token), ...$error_props]);
         return $this;
     }
 
