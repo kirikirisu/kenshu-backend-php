@@ -26,7 +26,7 @@ class PostRepository implements PostRepositoryInterface
         $post_list = [];
 
         foreach ($raw_post_list as $raw_post) {
-            $post_list[] = new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
+            $post_list[] = new ShowPostDto(id: (int)$raw_post["id"], user_id: (int)$raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: (int)$raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
         }
 
         return $post_list;
@@ -41,7 +41,7 @@ class PostRepository implements PostRepositoryInterface
         $stmt->execute();
         $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
+        return new ShowPostDto(id: (int)$raw_post["id"], user_id: (int)$raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
     }
 
     public function insertPost(IndexPostDto $payload): int

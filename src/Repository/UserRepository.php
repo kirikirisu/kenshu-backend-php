@@ -36,7 +36,7 @@ class UserRepository implements UserRepositoryInterface
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         var_dump($result);
-        return new DetailUserDto(id: $result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
+        return new DetailUserDto(id: (int)$result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
     }
 
     public function findUserByEmail(string $email): DetailUserDto|null
@@ -49,6 +49,6 @@ class UserRepository implements UserRepositoryInterface
 
         if (!$result) return null;
 
-        return new DetailUserDto(id: $result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
+        return new DetailUserDto(id: (int)$result['id'], name: $result['name'], email: $result['email'], password: $result['password'], icon_url: $result['icon_url']);
     }
 }

@@ -29,7 +29,7 @@ class TagRepository implements TagRepositoryInterface
         $tag_list = [];
 
         foreach ($raw_tag_list as $raw_tag) {
-            $tag_list[] = new IndexTagDto(id: $raw_tag['id'], name: $raw_tag['name']);
+            $tag_list[] = new IndexTagDto(id: (int)$raw_tag['id'], name: $raw_tag['name']);
         }
 
         return $tag_list;
@@ -48,7 +48,7 @@ class TagRepository implements TagRepositoryInterface
         $raw_tags = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($raw_tags as $tag) {
-            $tag_list[] = new IndexTagDto(id: $tag['id'], name: $tag['name']);
+            $tag_list[] = new IndexTagDto(id: (int)$tag['id'], name: $tag['name']);
         }
 
         return $tag_list;
@@ -73,7 +73,7 @@ class TagRepository implements TagRepositoryInterface
 
         $post_tag_list = [];
         foreach ($raw_post_tag_list as $raw_post_tag) {
-            $post_tag_list[] = new PostTagListDto(post_id: $raw_post_tag['post_id'], tag_list: PDOHelper::convertArrayAggResult($raw_post_tag['tag_names']));
+            $post_tag_list[] = new PostTagListDto(post_id: (int)$raw_post_tag['post_id'], tag_list: PDOHelper::convertArrayAggResult($raw_post_tag['tag_names']));
         }
 
         return $post_tag_list;
