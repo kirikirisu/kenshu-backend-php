@@ -2,7 +2,7 @@
 
 namespace App\Lib;
 
-use App\Lib\Component\Badge;
+use App\Lib\Component\HorizontalCard;
 use App\Lib\Error\InputError;
 use App\Lib\Struct\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
@@ -56,7 +56,7 @@ class HTMLBuilder implements HTMLBuilderInterface
     {
         $post_list_fragment = "";
         foreach ($post_list as $post) {
-            $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post, $post_tag_hash_map);
+            $post_list_fragment = $post_list_fragment . HorizontalCard::render($post, $post_tag_hash_map);
         }
 
         $ui_material_list = [
@@ -232,42 +232,6 @@ class HTMLBuilder implements HTMLBuilderInterface
         $tag_list_fragment = "";
         foreach ($tag_list as $tag) {
             $tag_list_fragment = $tag_list_fragment . self::defineComponent(content_path: '/view/html/part/badge.html', props: [new UIMaterial(slot: "tag", replacement: $tag->name)]);
-        }
-
-        return $tag_list_fragment;
-    }
-
-    /**
-     * @param ShowPostDto $post
-     * @param array<string, PostTagListDto> $post_tag_hash_map
-     * @return string
-     */
-    public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string
-    {
-        $tag_list = $post_tag_hash_map[$post->id]->tag_list;
-
-        $ui_material_list = [
-            new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
-            new UIMaterial(slot: "post_id", replacement: htmlspecialchars($post->id)),
-            new UIMaterial(slot: "body", replacement: $post->body),
-            new UIMaterial(slot: "image", replacement: $post->thumbnail_url),
-            new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($tag_list)),
-            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
-            new UIMaterial(slot: "user-name", replacement: $post->user_name),
-        ];
-
-        return self::defineComponent(content_path: '/view/html/part/horizontal-card.html', props: $ui_material_list);
-    }
-
-    /**
-     * @param string[] $tag_list
-     * @return string
-     */
-    public static function createBadgeListFromString(array $tag_list): string
-    {
-        $tag_list_fragment = "";
-        foreach ($tag_list as $tag) {
-            $tag_list_fragment = $tag_list_fragment . Badge::render(tag_name: $tag);
         }
 
         return $tag_list_fragment;
