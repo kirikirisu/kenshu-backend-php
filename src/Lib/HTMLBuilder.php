@@ -61,19 +61,21 @@ class HTMLBuilder implements HTMLBuilderInterface
     }
 
     /**
-     * @param DetailPostDto $post
+     * @param ShowPostDto $post
      * @param IndexImageDto[] $image_list
      * @param IndexTagDto[] $tag_list
      * @return $this
      */
-    public function postDetailPage(DetailPostDto $post, array $image_list, array $tag_list): self
+    public function postDetailPage(ShowPostDto $post, array $image_list, array $tag_list): self
     {
         $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
             new UIMaterial(slot: "tags", replacement: self::createBadgeList(tag_list: $tag_list)),
-            new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url))
+            new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url)),
+            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
+            new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
         $this->page = HTMLBuilderHelper::mixUiMaterial(base: $post_detail_page_base_html, ui_material_list: $ui_material_list);
@@ -198,7 +200,8 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param array<string, PostTagListDto> $post_tag_hash_map
      * @return string
      */
-    public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string {
+    public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string
+    {
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
         $tag_list = $post_tag_hash_map[$post->id]->tag_list;
 
@@ -208,6 +211,8 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "body", replacement: $post->body),
             new UIMaterial(slot: "image", replacement: $post->thumbnail_url),
             new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($tag_list)),
+            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
+            new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
         return HTMLBuilderHelper::mixUiMaterial(base: $horizontal_card, ui_material_list: $ui_material_list);

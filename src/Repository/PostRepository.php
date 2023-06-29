@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Lib\Singleton\PgConnect;
-use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\IndexPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Post\UpdatePostDto;
@@ -33,16 +32,16 @@ class PostRepository implements PostRepositoryInterface
         return $post_list;
     }
 
-    public function getPostById(int $id): DetailPostDto
+    public function getPostById(int $id): ShowPostDto
     {
-        $query = "SELECT posts.*, images.url AS thumbnail_url FROM posts INNER JOIN images ON posts.thumbnail_id = images.id WHERE posts.id = :id";
+        $query = "SELECT posts.*, images.url AS thumbnail_url, users.name AS user_name, users.icon_url AS user_avatar FROM posts INNER JOIN images ON posts.thumbnail_id = images.id INNER JOIN users ON users.id = posts.user_id WHERE posts.id = :id";
 
         $stmt = $this->pdo->prepare($query);
         $stmt->bindParam(":id", $id);
         $stmt->execute();
         $raw_post = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new DetailPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"]);
+        return new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
     }
 
     public function insertPost(IndexPostDto $payload): int
