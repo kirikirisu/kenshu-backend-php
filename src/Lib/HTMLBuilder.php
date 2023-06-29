@@ -2,7 +2,11 @@
 
 namespace App\Lib;
 
+use App\Lib\Component\BadgeList;
 use App\Lib\Component\HorizontalCard;
+use App\Lib\Component\Image;
+use App\Lib\Component\CheckBox;
+use App\Lib\Component\ComponentBuilder;
 use App\Lib\Error\InputError;
 use App\Lib\Struct\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
@@ -13,36 +17,6 @@ use App\Model\Dto\Tag\PostTagListDto;
 class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
-
-    public static function cleanRestSlot(string $text): string
-    {
-        $pattern = '/%(.*?)%/';
-        return preg_replace($pattern, '', $text);
-    }
-
-    /**
-     * @param UIMaterial[] $ui_material_list
-     */
-    public static function mixUiMaterial(string $base, array $ui_material_list): string
-    {
-        $fragment = "";
-
-        for ($i = 0; $i < count($ui_material_list); $i++) {
-            $slot = "%" . $ui_material_list[$i]->slot . "%";
-            if ($i === 0) $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $base);
-
-            $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $fragment);
-        }
-
-        return self::cleanRestSlot($fragment);
-    }
-
-    public static function defineComponent(string $content_path, array $props): string
-    {
-        $base_html = file_get_contents(dirname(__DIR__) . $content_path);
-        return self::mixUiMaterial(base: $base_html, ui_material_list: $props);
-    }
-
 
     /**
      * @param ShowPostDto[] $post_list
@@ -90,7 +64,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             ];
         }
 
-        $this->page = self::defineComponent(content_path: '/view/html/page/top.html', props: [...$ui_material_list, ...$error_ui_material_list]);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/top.html', props: [...$ui_material_list, ...$error_ui_material_list]);
 
         return $this;
     }
@@ -112,7 +86,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
-        $this->page = self::defineComponent(content_path: '/view/html/page/post-detail.html', props: $ui_material_list);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/post-detail.html', props: $ui_material_list);
 
         return $this;
     }
@@ -159,7 +133,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             ];
         }
 
-        $this->page = self::defineComponent(content_path: '/view/html/page/post-edit.html', props: [...$ui_material_list, ...$error_ui_material_list]);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/post-edit.html', props: [...$ui_material_list, ...$error_ui_material_list]);
 
         return $this;
     }
@@ -180,13 +154,13 @@ class HTMLBuilder implements HTMLBuilderInterface
         }
 
 
-        $this->page = self::defineComponent(content_path: '/view/html/page/user-signup.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token), ...$error_props]);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/user-signup.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token), ...$error_props]);
         return $this;
     }
 
     public function signInPage(string $csrf_token): self
     {
-        $this->page = self::defineComponent(content_path: '/view/html/page/user-signin.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/user-signin.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
 
         return $this;
     }
@@ -205,18 +179,9 @@ class HTMLBuilder implements HTMLBuilderInterface
     {
         $fragment = "";
         foreach ($checkbox_list as $checkbox) {
-            $ui_material_list = [
-                new UIMaterial(slot: "id", replacement: $checkbox->id),
-                new UIMaterial(slot: "tag_name", replacement: $checkbox->name),
-            ];
+            $isChecked = in_array($checkbox->id, $checked_tag_id_list) && !is_null($checked_tag_id_list);
 
-            if (in_array($checkbox->id, $checked_tag_id_list) && !is_null($checked_tag_id_list)) {
-                $ui_material_list[] = new UIMaterial(slot: "checked", replacement: "checked");
-            } else {
-                $ui_material_list[] = new UIMaterial(slot: "checked", replacement: "");
-            }
-
-            $fragment = $fragment . self::defineComponent(content_path: '/view/html/part/checkbox.html', props: $ui_material_list);
+            $fragment = $fragment . CheckBox::render(id: $checkbox->id, name: $checkbox->name, isChecked: $isChecked);
         }
 
         return $fragment;
@@ -229,12 +194,12 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createBadgeList(array $tag_list): string
     {
-        $tag_list_fragment = "";
+        $tag_name_list = [];
         foreach ($tag_list as $tag) {
-            $tag_list_fragment = $tag_list_fragment . self::defineComponent(content_path: '/view/html/part/badge.html', props: [new UIMaterial(slot: "tag", replacement: $tag->name)]);
+           $tag_name_list[] = $tag->name;
         }
 
-        return $tag_list_fragment;
+        return BadgeList::render(tag_name_list: $tag_name_list);
     }
 
     /**
@@ -244,20 +209,10 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createImageList(array $image_list, string $thumbnail_url): string
     {
-        $thumbnail_style = "border-8 border-orange-500";
 
         $image_list_fragment = "";
         foreach ($image_list as $image) {
-            $ui_material_list = [];
-            $ui_material_list[] = new UIMaterial(slot: "src", replacement: $image->url);
-
-            if ($thumbnail_url === $image->url) {
-                $ui_material_list[] = new UIMaterial(slot: "thumbnail_style", replacement: $thumbnail_style);
-            } else {
-                $ui_material_list[] = new UIMaterial(slot: "thumbnail_style", replacement: "");
-            }
-
-            $image_list_fragment = $image_list_fragment . self::defineComponent(content_path: '/view/html/part/image.html', props: $ui_material_list);
+            $image_list_fragment = $image_list_fragment . Image::render(url:$image->url, isThumbnail: $thumbnail_url === $image->url);
         }
 
         return $image_list_fragment;
