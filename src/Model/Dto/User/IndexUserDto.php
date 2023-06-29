@@ -8,7 +8,7 @@ class IndexUserDto
         public string $name,
         public string $email,
         public string $password,
-        public string $icon_url)
+        public ?string $icon_url)
     {
     }
 }

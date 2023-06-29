@@ -51,9 +51,9 @@ class CreatePostHandler implements HandlerInterface
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
 
-        $img_error = ValidateImageFile::exec(req: $this->req);
+        $img_error_list = ValidateImageFile::exec(req: $this->req);
         // TODO: create ui
-        if (!is_null($img_error)) return new Response(status_code: OK_STATUS_CODE, html: "<div>{$img_error->message}</div>");
+        if (count($img_error_list) > 0) return new Response(status_code: OK_STATUS_CODE, html: "<div>file error</div>");
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 
