@@ -67,7 +67,7 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function postDetailPage(ShowPostDto $post, array $image_list, array $tag_list): self
     {
-        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
+        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-detail.html');
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
@@ -94,7 +94,7 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function postEditPage(ShowPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
-        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
+        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-edit.html');
         $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
 
