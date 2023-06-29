@@ -38,7 +38,7 @@ class CreatePostHandler implements HandlerInterface
     {
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey("user_id");
-        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>ログインが必要です。</div>");
 
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];

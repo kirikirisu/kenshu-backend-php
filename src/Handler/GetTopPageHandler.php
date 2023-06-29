@@ -26,6 +26,7 @@ class GetTopPageHandler implements HandlerInterface
     public function run(): Response
     {
         SessionManager::beginSession();
+        $status = $this->req->get['refererStatus'] ?? null;
 
         $post_list = $this->post_repo->getPostList();
 
@@ -41,7 +42,7 @@ class GetTopPageHandler implements HandlerInterface
             $post_tag_hash_map[$post_tag->post_id] = $post_tag;
         }
 
-        $html = $this->compose->topPage(post_list: $post_list, post_tag_hash_map: $post_tag_hash_map, csrf_token: CsrfManager::generate())->getHtml();
+        $html = $this->compose->topPage(post_list: $post_list, post_tag_hash_map: $post_tag_hash_map, status: $status, csrf_token: CsrfManager::generate())->getHtml();
 
         return new Response(status_code: OK_STATUS_CODE, html: $html);
     }

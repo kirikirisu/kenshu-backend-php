@@ -20,10 +20,10 @@ class DeletePostHandler implements HandlerInterface
     {
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey("user_id");
-        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
 
         $post = $this->post_repo->getPostById(id: $this->post_id);
-        if ($post->user_id !== (int)$user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+        $redirect_url = HOST_BASE_URL . "?refererStatus=unauthorized";
+        if (!$user_id || $post->user_id !== (int)$user_id) return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
 
         $this->post_repo->deletePost($this->post_id);
 

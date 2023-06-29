@@ -16,7 +16,7 @@ class HTMLBuilder implements HTMLBuilderInterface
 
     public static function cleanRestSlot(string $text): string
     {
-        $pattern = '/%.*?%/s';
+        $pattern = '/%(.*?)%/';
         return preg_replace($pattern, '', $text);
     }
 
@@ -48,10 +48,11 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param ShowPostDto[] $post_list
      * @param array<string, PostTagListDto> $post_tag_hash_map
      * @param string $csrf_token
+     * @param string|null $status
      * @param array|null $error_list
      * @return $this
      */
-    public function topPage(array $post_list, array $post_tag_hash_map, string $csrf_token, array $error_list = null): self
+    public function topPage(array $post_list, array $post_tag_hash_map, ?string $status, string $csrf_token, array $error_list = null): self
     {
         $post_list_fragment = "";
         foreach ($post_list as $post) {
@@ -63,6 +64,10 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "post_title", replacement: $post_list_fragment),
             new UIMaterial(slot: "csrf", replacement: $csrf_token),
         ];
+
+        if ($status === "unauthorized") {
+            $ui_material_list[] = new UIMaterial(slot: "referer_error", replacement: "<p class='mt-1 text-pink-600'>他のユーザーの投稿は、編集、更新、削除できません。</p>");
+        }
 
         $error_ui_material_list = [];
         if ($error_list) {
