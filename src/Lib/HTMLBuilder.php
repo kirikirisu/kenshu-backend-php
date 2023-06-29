@@ -2,13 +2,13 @@
 
 namespace App\Lib;
 
+use App\Lib\Component\Badge;
 use App\Lib\Error\InputError;
 use App\Lib\Struct\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
 use App\Model\Dto\Tag\PostTagListDto;
-
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
@@ -267,7 +267,7 @@ class HTMLBuilder implements HTMLBuilderInterface
     {
         $tag_list_fragment = "";
         foreach ($tag_list as $tag) {
-            $tag_list_fragment = $tag_list_fragment . self::defineComponent(content_path: '/view/html/part/badge.html', props: [new UIMaterial(slot: "tag", replacement: $tag)]);
+            $tag_list_fragment = $tag_list_fragment . Badge::render(tag_name: $tag);
         }
 
         return $tag_list_fragment;
