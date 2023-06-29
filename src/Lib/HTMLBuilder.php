@@ -2,13 +2,13 @@
 
 namespace App\Lib;
 
-use App\Lib\Error\InputError;
 use App\Lib\Helper\HTMLBuilderHelper\HTMLBuilderHelper;
 use App\Lib\Helper\HTMLBuilderHelper\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Tag\PostTagListDto;
 
 
 class HTMLBuilder implements HTMLBuilderInterface
@@ -16,17 +16,19 @@ class HTMLBuilder implements HTMLBuilderInterface
     public string $page = "";
 
     /**
-     * @param ShowPostDto[] $data_chunk
-     * @param string $csrf_token ;
-     * @param InputError[] $error_list
+     * @param ShowPostDto[] $post_list
+     * @param array<string, PostTagListDto> $post_tag_hash_map
+     * @param string $csrf_token
+     * @param array|null $error_list
+     * @return $this
      */
-    public function topPage(array $data_chunk, string $csrf_token, array $error_list = null): self
+    public function topPage(array $post_list, array $post_tag_hash_map, string $csrf_token, array $error_list = null): self
     {
         $top_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/top.html');
 
         $post_list_fragment = "";
-        foreach ($data_chunk as $post) {
-            $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post);
+        foreach ($post_list as $post) {
+            $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post, $post_tag_hash_map);
         }
 
         $ui_material_list = [
@@ -191,14 +193,21 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $tag_list_fragment;
     }
 
-    public static function createHorizontalCard(ShowPostDto $post): string {
+    /**
+     * @param ShowPostDto $post
+     * @param array<string, PostTagListDto> $post_tag_hash_map
+     * @return string
+     */
+    public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string {
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
+        $tag_list = $post_tag_hash_map[$post->id]->tag_list;
+
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "post_id", replacement: htmlspecialchars($post->id)),
             new UIMaterial(slot: "body", replacement: $post->body),
             new UIMaterial(slot: "image", replacement: $post->thumbnail_url),
-            new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($post->tag_list)),
+            new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($tag_list)),
         ];
 
         return HTMLBuilderHelper::mixUiMaterial(base: $horizontal_card, ui_material_list: $ui_material_list);

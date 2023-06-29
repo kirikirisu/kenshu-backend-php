@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\Lib\Helper\PDOHelper;
 use App\Lib\Singleton\PgConnect;
 use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\IndexPostDto;
@@ -22,13 +21,13 @@ class PostRepository implements PostRepositoryInterface
      */
     public function getPostList(): array
     {
-        $query = "SELECT p.*, array_agg(images.url) AS thumbnail, array_agg(t.name) AS tags FROM posts p INNER JOIN images ON p.thumbnail_id = images.id INNER JOIN post_tags pt ON p.id = pt.post_id INNER JOIN tags t ON pt.tag_id = t.id GROUP BY p.id";
+        $query = "SELECT posts.*, images.url AS thumbnail_url, users.name AS user_name, users.icon_url AS user_avatar FROM posts INNER JOIN images ON posts.thumbnail_id = images.id INNER JOIN users ON users.id = posts.user_id";
         $res = $this->pdo->query($query);
         $raw_post_list = $res->fetchAll(\PDO::FETCH_ASSOC);
         $post_list = [];
 
-        foreach ($raw_post_list as $post) {
-            $post_list[] = new ShowPostDto(id: $post["id"], user_id: $post["user_id"], title: $post["title"], body: $post["body"], thumbnail_url: PDOHelper::convertArrayAggResult(text: $post["thumbnail"])[0], tag_list: PDOHelper::convertArrayAggResult(text: $post['tags']));
+        foreach ($raw_post_list as $raw_post) {
+            $post_list[] = new ShowPostDto(id: $raw_post["id"], user_id: $raw_post["user_id"], title: $raw_post["title"], body: $raw_post["body"], thumbnail_id: $raw_post["thumbnail_id"], thumbnail_url: $raw_post["thumbnail_url"], user_name: $raw_post["user_name"], user_avatar: $raw_post['user_avatar']);
         }
 
         return $post_list;

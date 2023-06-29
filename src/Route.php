@@ -28,7 +28,7 @@ class Route
     public static function getHandler(Request $req): HandlerInterface
     {
         if ($req->method === "GET" && $req->path === "/") {
-            return new GetTopPageHandler(req: $req, compose: PageCompose::getComposer(), post_repo: new PostRepository());
+            return new GetTopPageHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository(), tag_repo: new TagRepository(), post_repo: new PostRepository());
 
         } else if ($req->method === "POST" && $req->path === "/") {
             $pdo = PgConnect::getClient();

@@ -4,11 +4,20 @@ namespace App\Lib;
 
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\DetailPostDto;
+use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Tag\PostTagListDto;
 
 interface HTMLBuilderInterface
 {
-    public function topPage(array $data_chunk, string $csrf_token, array $error_list = null): self;
+    /**
+     * @param ShowPostDto[] $post_list
+     * @param array<string, PostTagListDto> $post_tag_hash_map
+     * @param string $csrf_token
+     * @param array|null $error_list
+     * @return $this
+     */
+    public function topPage(array $post_list, array $post_tag_hash_map, string $csrf_token, array $error_list = null): self;
 
     /**
      * @param DetailPostDto $post
