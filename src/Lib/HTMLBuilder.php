@@ -5,7 +5,6 @@ namespace App\Lib;
 use App\Lib\Helper\HTMLBuilderHelper\HTMLBuilderHelper;
 use App\Lib\Helper\HTMLBuilderHelper\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
-use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
 use App\Model\Dto\Tag\PostTagListDto;
@@ -85,7 +84,7 @@ class HTMLBuilder implements HTMLBuilderInterface
 
 
     /**
-     * @param DetailPostDto $post
+     * @param ShowPostDto $post
      * @param string $csrf_token
      * @param IndexImageDto[] $image_list
      * @param IndexTagDto[] $tag_list
@@ -93,7 +92,7 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param array|null $error_list
      * @return $this
      */
-    public function postEditPage(DetailPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
+    public function postEditPage(ShowPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
         $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
         $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
