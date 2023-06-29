@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Dto\Post;
 
 class ShowPostDto
@@ -16,8 +17,11 @@ class ShowPostDto
         public int    $user_id,
         public string $title,
         public string $body,
+        public int    $thumbnail_id,
         public string $thumbnail_url,
-        public array $tag_list)
+        public string $user_name,
+        public string $user_avatar
+    )
     {
     }
 }

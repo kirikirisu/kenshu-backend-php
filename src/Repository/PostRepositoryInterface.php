@@ -12,7 +12,7 @@ interface PostRepositoryInterface
     /* @return ShowPostDto[] */
     public function getPostList(): array;
 
-    public function getPostById(int $id): DetailPostDto;
+    public function getPostById(int $id): ShowPostDto;
 
     public function insertPost(IndexPostDto $payload): int;
 

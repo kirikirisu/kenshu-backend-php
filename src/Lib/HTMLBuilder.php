@@ -2,13 +2,12 @@
 
 namespace App\Lib;
 
-use App\Lib\Error\InputError;
 use App\Lib\Helper\HTMLBuilderHelper\HTMLBuilderHelper;
 use App\Lib\Helper\HTMLBuilderHelper\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
-use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Tag\PostTagListDto;
 
 
 class HTMLBuilder implements HTMLBuilderInterface
@@ -16,17 +15,19 @@ class HTMLBuilder implements HTMLBuilderInterface
     public string $page = "";
 
     /**
-     * @param ShowPostDto[] $data_chunk
-     * @param string $csrf_token ;
-     * @param InputError[] $error_list
+     * @param ShowPostDto[] $post_list
+     * @param array<string, PostTagListDto> $post_tag_hash_map
+     * @param string $csrf_token
+     * @param array|null $error_list
+     * @return $this
      */
-    public function topPage(array $data_chunk, string $csrf_token, array $error_list = null): self
+    public function topPage(array $post_list, array $post_tag_hash_map, string $csrf_token, array $error_list = null): self
     {
         $top_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/top.html');
 
         $post_list_fragment = "";
-        foreach ($data_chunk as $post) {
-            $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post);
+        foreach ($post_list as $post) {
+            $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post, $post_tag_hash_map);
         }
 
         $ui_material_list = [
@@ -59,19 +60,21 @@ class HTMLBuilder implements HTMLBuilderInterface
     }
 
     /**
-     * @param DetailPostDto $post
+     * @param ShowPostDto $post
      * @param IndexImageDto[] $image_list
      * @param IndexTagDto[] $tag_list
      * @return $this
      */
-    public function postDetailPage(DetailPostDto $post, array $image_list, array $tag_list): self
+    public function postDetailPage(ShowPostDto $post, array $image_list, array $tag_list): self
     {
-        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/postDetail.html');
+        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-detail.html');
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
             new UIMaterial(slot: "tags", replacement: self::createBadgeList(tag_list: $tag_list)),
-            new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url))
+            new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url)),
+            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
+            new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
         $this->page = HTMLBuilderHelper::mixUiMaterial(base: $post_detail_page_base_html, ui_material_list: $ui_material_list);
@@ -81,7 +84,7 @@ class HTMLBuilder implements HTMLBuilderInterface
 
 
     /**
-     * @param DetailPostDto $post
+     * @param ShowPostDto $post
      * @param string $csrf_token
      * @param IndexImageDto[] $image_list
      * @param IndexTagDto[] $tag_list
@@ -89,9 +92,9 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param array|null $error_list
      * @return $this
      */
-    public function postEditPage(DetailPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
+    public function postEditPage(ShowPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
-        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/editPost.html');
+        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-edit.html');
         $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
 
@@ -191,14 +194,24 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $tag_list_fragment;
     }
 
-    public static function createHorizontalCard(ShowPostDto $post): string {
+    /**
+     * @param ShowPostDto $post
+     * @param array<string, PostTagListDto> $post_tag_hash_map
+     * @return string
+     */
+    public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string
+    {
         $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
+        $tag_list = $post_tag_hash_map[$post->id]->tag_list;
+
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "post_id", replacement: htmlspecialchars($post->id)),
             new UIMaterial(slot: "body", replacement: $post->body),
             new UIMaterial(slot: "image", replacement: $post->thumbnail_url),
-            new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($post->tag_list)),
+            new UIMaterial(slot: "tags", replacement: self::createBadgeListFromString($tag_list)),
+            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
+            new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
         return HTMLBuilderHelper::mixUiMaterial(base: $horizontal_card, ui_material_list: $ui_material_list);

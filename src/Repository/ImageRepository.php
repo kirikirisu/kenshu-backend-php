@@ -21,7 +21,7 @@ class ImageRepository implements ImageRepositoryInterface
         $stmt->execute();
         $raw_image = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0];
 
-        return new IndexImageDto(id: $raw_image['id'], post_id: $raw_image['post_id'], url: $raw_image['url']);
+        return new IndexImageDto(id: (int)$raw_image['id'], post_id: (int)$raw_image['post_id'], url: $raw_image['url']);
     }
 
     /**
@@ -37,7 +37,7 @@ class ImageRepository implements ImageRepositoryInterface
         $image_list = [];
 
         foreach($raw_image_list as $raw_image) {
-            $image_list[] = new IndexImageDto(id: $raw_image['id'], post_id: $raw_image['post_id'], url: $raw_image['url']);
+            $image_list[] = new IndexImageDto(id: (int)$raw_image['id'], post_id: (int)$raw_image['post_id'], url: $raw_image['url']);
         }
 
         return $image_list;

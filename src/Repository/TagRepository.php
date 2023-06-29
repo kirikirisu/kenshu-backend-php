@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Lib\Helper\PDOHelper;
 use App\Lib\Singleton\PgConnect;
 use App\Model\Dto\Tag\IndexTagDto;
+use App\Model\Dto\Tag\PostTagListDto;
 
 class TagRepository implements TagRepositoryInterface
 {
@@ -27,7 +29,7 @@ class TagRepository implements TagRepositoryInterface
         $tag_list = [];
 
         foreach ($raw_tag_list as $raw_tag) {
-            $tag_list[] = new IndexTagDto(id: $raw_tag['id'], name: $raw_tag['name']);
+            $tag_list[] = new IndexTagDto(id: (int)$raw_tag['id'], name: $raw_tag['name']);
         }
 
         return $tag_list;
@@ -46,10 +48,35 @@ class TagRepository implements TagRepositoryInterface
         $raw_tags = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         foreach ($raw_tags as $tag) {
-            $tag_list[] = new IndexTagDto(id: $tag['id'], name: $tag['name']);
+            $tag_list[] = new IndexTagDto(id: (int)$tag['id'], name: $tag['name']);
         }
 
         return $tag_list;
+    }
+
+    /**
+     * @param int[] $post_id_list
+     * @return PostTagListDto[]
+     */
+    public function getPostTagByPostIdList(array $post_id_list): array
+    {
+        $placeholder = PDOHelper::generateInClausePlaceholder($post_id_list);
+        $query = "SELECT post_tags.post_id, array_agg(tags.name) AS tag_names FROM tags INNER JOIN post_tags ON post_tags.tag_id = tags.id WHERE post_tags.post_id IN ($placeholder) GROUP BY post_tags.post_id";
+
+        $stmt = $this->pdo->prepare($query);
+        foreach ($post_id_list as $key => $post_id) {
+            $stmt->bindValue($key + 1, $post_id);
+        }
+
+        $stmt->execute();
+        $raw_post_tag_list = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $post_tag_list = [];
+        foreach ($raw_post_tag_list as $raw_post_tag) {
+            $post_tag_list[] = new PostTagListDto(post_id: (int)$raw_post_tag['post_id'], tag_list: PDOHelper::convertArrayAggResult($raw_post_tag['tag_names']));
+        }
+
+        return $post_tag_list;
     }
 
     /**
