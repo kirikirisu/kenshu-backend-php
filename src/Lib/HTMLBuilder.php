@@ -2,17 +2,39 @@
 
 namespace App\Lib;
 
-use App\Lib\Helper\HTMLBuilderHelper\HTMLBuilderHelper;
-use App\Lib\Helper\HTMLBuilderHelper\UIMaterial;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
 use App\Model\Dto\Tag\PostTagListDto;
+use App\Lib\Struct\UIMaterial;
 
 
 class HTMLBuilder implements HTMLBuilderInterface
 {
     public string $page = "";
+
+    /**
+     * @param UIMaterial[] $ui_material_list
+     */
+    public static function mixUiMaterial(string $base, array $ui_material_list): string
+    {
+        $fragment = "";
+
+        for ($i = 0; $i < count($ui_material_list); $i++) {
+            $slot = "%" . $ui_material_list[$i]->slot . "%";
+            if ($i === 0) $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $base);
+
+            $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $fragment);
+        }
+
+        return $fragment;
+    }
+
+    public static function defineComponent(string $content_path, array $props): string
+    {
+        $base_html = file_get_contents(dirname(__DIR__) . $content_path);
+        return self::mixUiMaterial(base: $base_html, ui_material_list: $props);
+    }
 
     /**
      * @param ShowPostDto[] $post_list
@@ -23,8 +45,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function topPage(array $post_list, array $post_tag_hash_map, string $csrf_token, array $error_list = null): self
     {
-        $top_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/top.html');
-
         $post_list_fragment = "";
         foreach ($post_list as $post) {
             $post_list_fragment = $post_list_fragment . self::createHorizontalCard($post, $post_tag_hash_map);
@@ -36,25 +56,28 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "csrf", replacement: $csrf_token),
         ];
 
+        $error_ui_material_list = [];
         if ($error_list) {
             foreach ($error_list as $error) {
                 if ($error->field === "title") {
-                    $ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
+                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
                 }
                 if ($error->field === "body") {
-                    $ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
+                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
                 }
                 if ($error->field === "image") {
-                    $ui_material_list[] = new UIMaterial(slot: "invalid_image", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
+                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_image", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
                 }
             }
+        } else {
+            $error_ui_material_list = [
+                new UIMaterial(slot: "invalid_title", replacement: ''),
+                new UIMaterial(slot: "invalid_body", replacement: ''),
+                new UIMaterial(slot: "invalid_image", replacement: '')
+            ];
         }
 
-        $ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: '');
-        $ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '');
-        $ui_material_list[] = new UIMaterial(slot: "invalid_image", replacement: '');
-
-        $this->page = HTMLBuilderHelper::mixUiMaterial(base: $top_page_base_html, ui_material_list: $ui_material_list);
+        $this->page = self::defineComponent(content_path: '/view/html/page/top.html', props: [...$ui_material_list, ...$error_ui_material_list]);
 
         return $this;
     }
@@ -67,7 +90,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function postDetailPage(ShowPostDto $post, array $image_list, array $tag_list): self
     {
-        $post_detail_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-detail.html');
         $ui_material_list = [
             new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
             new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
@@ -77,7 +99,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
-        $this->page = HTMLBuilderHelper::mixUiMaterial(base: $post_detail_page_base_html, ui_material_list: $ui_material_list);
+        $this->page = self::defineComponent(content_path: '/view/html/page/post-detail.html', props: $ui_material_list);
 
         return $this;
     }
@@ -94,7 +116,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function postEditPage(ShowPostDto $post, string $csrf_token, array $image_list, array $tag_list, array $checked_tag_id_list, array $error_list = null): self
     {
-        $edit_post_page_base_html = file_get_contents(dirname(__DIR__) . '/view/html/page/post-edit.html');
         $tag_list_fragment = self::createCheckboxList(checkbox_list: $tag_list, checked_tag_id_list: $checked_tag_id_list);
         $image_list_fragment = self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url);
 
@@ -119,27 +140,26 @@ class HTMLBuilder implements HTMLBuilderInterface
                 }
             }
         } else {
-            $error_ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: "");
-            $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: "");
+            $error_ui_material_list= [
+                new UIMaterial(slot: "invalid_title", replacement: ""),
+                new UIMaterial(slot: "invalid_body", replacement: "")
+            ];
         }
 
-
-        $this->page = HTMLBuilderHelper::mixUiMaterial(base: $edit_post_page_base_html, ui_material_list: [...$ui_material_list, ...$error_ui_material_list]);
+        $this->page = self::defineComponent(content_path: '/view/html/page/post-edit.html', props: [...$ui_material_list, ...$error_ui_material_list]);
 
         return $this;
     }
 
     public function signUpPage(string $csrf_token): self
     {
-        $user_signup_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signup.html');
-        $this->page = HTMLBuilderHelper::mixUiMaterial(base: $user_signup_base, ui_material_list: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
+        $this->page = self::defineComponent(content_path: '/view/html/page/user-signup.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
         return $this;
     }
 
     public function signInPage(string $csrf_token): self
     {
-        $user_signin_base = file_get_contents(dirname(__DIR__) . '/view/html/page/user-signin.html');
-        $this->page = HTMLBuilderHelper::mixUiMaterial(base: $user_signin_base, ui_material_list: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
+        $this->page = self::defineComponent(content_path: '/view/html/page/user-signin.html', props: [new UIMaterial(slot: "csrf", replacement: $csrf_token)]);
 
         return $this;
     }
@@ -156,8 +176,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createCheckboxList(array $checkbox_list, array|null $checked_tag_id_list): string
     {
-        $checkbox_part = file_get_contents(dirname(__DIR__) . '/view/html/part/checkbox.html');
-
         $fragment = "";
         foreach ($checkbox_list as $checkbox) {
             $ui_material_list = [
@@ -171,7 +189,7 @@ class HTMLBuilder implements HTMLBuilderInterface
                 $ui_material_list[] = new UIMaterial(slot: "checked", replacement: "");
             }
 
-            $fragment = $fragment . HTMLBuilderHelper::mixUiMaterial(base: $checkbox_part, ui_material_list: $ui_material_list);
+            $fragment = $fragment . self::defineComponent(content_path: '/view/html/part/checkbox.html', props: $ui_material_list);
         }
 
         return $fragment;
@@ -184,11 +202,9 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createBadgeList(array $tag_list): string
     {
-        $tag_part = file_get_contents(dirname(__DIR__) . '/view/html/part/badge.html');
-
         $tag_list_fragment = "";
         foreach ($tag_list as $tag) {
-            $tag_list_fragment = $tag_list_fragment . HTMLBuilderHelper::mixUiMaterial(base: $tag_part, ui_material_list: [new UIMaterial(slot: "tag", replacement: $tag->name)]);
+            $tag_list_fragment = $tag_list_fragment . self::defineComponent(content_path: '/view/html/part/badge.html', props: [new UIMaterial(slot: "tag", replacement: $tag->name)]);
         }
 
         return $tag_list_fragment;
@@ -201,7 +217,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createHorizontalCard(ShowPostDto $post, array $post_tag_hash_map): string
     {
-        $horizontal_card = file_get_contents(dirname(__DIR__) . '/view/html/part/horizontal-card.html');
         $tag_list = $post_tag_hash_map[$post->id]->tag_list;
 
         $ui_material_list = [
@@ -214,7 +229,7 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "user-name", replacement: $post->user_name),
         ];
 
-        return HTMLBuilderHelper::mixUiMaterial(base: $horizontal_card, ui_material_list: $ui_material_list);
+        return self::defineComponent(content_path: '/view/html/part/horizontal-card.html', props: $ui_material_list);
     }
 
     /**
@@ -223,11 +238,9 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createBadgeListFromString(array $tag_list): string
     {
-        $tag_part = file_get_contents(dirname(__DIR__) . '/view/html/part/badge.html');
-
         $tag_list_fragment = "";
         foreach ($tag_list as $tag) {
-            $tag_list_fragment = $tag_list_fragment . HTMLBuilderHelper::mixUiMaterial(base: $tag_part, ui_material_list: [new UIMaterial(slot: "tag", replacement: $tag)]);
+            $tag_list_fragment = $tag_list_fragment . self::defineComponent(content_path: '/view/html/part/badge.html', props: [new UIMaterial(slot: "tag", replacement: $tag)]);
         }
 
         return $tag_list_fragment;
@@ -240,7 +253,6 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public static function createImageList(array $image_list, string $thumbnail_url): string
     {
-        $image_part = file_get_contents(dirname(__DIR__) . '/view/html/part/image.html');
         $thumbnail_style = "border-8 border-orange-500";
 
         $image_list_fragment = "";
@@ -254,7 +266,7 @@ class HTMLBuilder implements HTMLBuilderInterface
                 $ui_material_list[] = new UIMaterial(slot: "thumbnail_style", replacement: "");
             }
 
-            $image_list_fragment = $image_list_fragment . HTMLBuilderHelper::mixUiMaterial(base: $image_part, ui_material_list: $ui_material_list);
+            $image_list_fragment = $image_list_fragment . self::defineComponent(content_path: '/view/html/part/image.html', props: $ui_material_list);
         }
 
         return $image_list_fragment;
