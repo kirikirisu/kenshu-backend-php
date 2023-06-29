@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+	<title>kenshu-backend-php</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+	</script>
+</head>
+<body class="mx-auto max-w-4xl">
+<header class="mt-5 mb-10">
+	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
+</header>
+<main>
+	<form action="/user/signout" method="post" enctype="multipart/form-data" class="w-2/5">
+		<input id="csrf" type="text" name="csrf" hidden value="%csrf%"/>
+		<button
+				type="submit"
+				class="mt-5 bg-sky-500 hover:bg-sky-700 px-5 py-2 text-sm leading-5 rounded font-semibold text-white"
+		>
+			Sign out
+		</button>
+	</form>
+</main>
+</body>
+</html>

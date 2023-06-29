@@ -1,19 +1,19 @@
 <?php
 namespace App\Lib\Manager;
 
+// TODO: rename to CsrfValidater and move dir
+use App\Lib\Http\SessionManager;
+
 class CsrfManager
 {
     const HASH_ALGO = 'sha256';
 
     public static function generate(): string
     {
-        if (session_status() === PHP_SESSION_NONE) {
-            throw new \BadMethodCallException('Session is not active.');
-        }
-        return hash(self::HASH_ALGO, session_id());
+        return hash(self::HASH_ALGO, SessionManager::getSessionId());
     }
 
-    public static function validate($token): bool
+    public static function validate(string $token): bool
     {
         return self::generate() === $token;
     }
