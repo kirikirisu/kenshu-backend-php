@@ -2,8 +2,8 @@
 
 namespace App\Lib;
 
+use App\Lib\Struct\QueryParam;
 use App\Model\Dto\Image\IndexImageDto;
-use App\Model\Dto\Post\DetailPostDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
 use App\Model\Dto\Tag\PostTagListDto;
@@ -13,12 +13,12 @@ interface HTMLBuilderInterface
     /**
      * @param ShowPostDto[] $post_list
      * @param array<string, PostTagListDto> $post_tag_hash_map
-     * @param string|null $status
+     * @param QueryParam[] $query
      * @param string $csrf_token
      * @param array|null $error_list
      * @return $this
      */
-    public function topPage(array $post_list, array $post_tag_hash_map, ?string $status, string $csrf_token, array $error_list = null): self;
+    public function topPage(array $post_list, array $post_tag_hash_map, array $query, string $csrf_token, array $error_list = null): self;
 
     /**
      * @param ShowPostDto $post

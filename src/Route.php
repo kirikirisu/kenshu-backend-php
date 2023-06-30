@@ -27,7 +27,7 @@ class Route
 {
     public static function getHandler(Request $req): HandlerInterface
     {
-        if ($req->method === "GET" && preg_match("/\/(\?refererStatus=[a-zA-Z0-9_-]+)?$/", $req->path)) {
+        if ($req->method === "GET" && preg_match("/^\/(\?([a-zA-Z0-9_]+=[a-zA-Z0-9_]+&)*[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)?$/", $req->path)) {
             return new GetTopPageHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository(), tag_repo: new TagRepository(), post_repo: new PostRepository());
 
         } else if ($req->method === "POST" && $req->path === "/") {

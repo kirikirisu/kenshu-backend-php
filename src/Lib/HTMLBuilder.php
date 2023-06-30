@@ -3,12 +3,14 @@
 namespace App\Lib;
 
 use App\Lib\Component\BadgeList;
-use App\Lib\Component\HorizontalCard;
-use App\Lib\Component\Image;
 use App\Lib\Component\CheckBox;
 use App\Lib\Component\ComponentBuilder;
+use App\Lib\Component\HorizontalCard;
+use App\Lib\Component\Image;
 use App\Lib\Error\InputError;
+use App\Lib\Struct\QueryParam;
 use App\Lib\Struct\UIMaterial;
+use App\Lib\Validator\ErrorMessage;
 use App\Model\Dto\Image\IndexImageDto;
 use App\Model\Dto\Post\ShowPostDto;
 use App\Model\Dto\Tag\IndexTagDto;
@@ -22,11 +24,11 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param ShowPostDto[] $post_list
      * @param array<string, PostTagListDto> $post_tag_hash_map
      * @param string $csrf_token
-     * @param string|null $status
+     * @param QueryParam[] $query
      * @param array|null $error_list
      * @return $this
      */
-    public function topPage(array $post_list, array $post_tag_hash_map, ?string $status, string $csrf_token, array $error_list = null): self
+    public function topPage(array $post_list, array $post_tag_hash_map, array $query, string $csrf_token, array $error_list = null): self
     {
         $post_list_fragment = "";
         foreach ($post_list as $post) {
@@ -39,32 +41,14 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "csrf", replacement: $csrf_token),
         ];
 
-        if ($status === "unauthorized") {
-            $ui_material_list[] = new UIMaterial(slot: "referer_error", replacement: "<p class='mt-1 text-pink-600'>他のユーザーの投稿は、編集、更新、削除できません。</p>");
+        foreach ($query as $q) {
+            $error_ui_material = ErrorMessage::getErrorUIMaterial($q);
+            if (is_null($error_ui_material)) continue;
+
+            $ui_material_list[] = $error_ui_material;
         }
 
-        $error_ui_material_list = [];
-        if ($error_list) {
-            foreach ($error_list as $error) {
-                if ($error->field === "title") {
-                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_title", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
-                }
-                if ($error->field === "body") {
-                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
-                }
-                if ($error->field === "image") {
-                    $error_ui_material_list[] = new UIMaterial(slot: "invalid_image", replacement: '<p class="mt-1 text-pink-600">' . $error->message . '</p>');
-                }
-            }
-        } else {
-            $error_ui_material_list = [
-                new UIMaterial(slot: "invalid_title", replacement: ''),
-                new UIMaterial(slot: "invalid_body", replacement: ''),
-                new UIMaterial(slot: "invalid_image", replacement: '')
-            ];
-        }
-
-        $this->page = ComponentBuilder::defineComponent(content_path: 'page/top.html', props: [...$ui_material_list, ...$error_ui_material_list]);
+        $this->page = ComponentBuilder::defineComponent(content_path: 'page/top.html', props: $ui_material_list);
 
         return $this;
     }
@@ -77,16 +61,23 @@ class HTMLBuilder implements HTMLBuilderInterface
      */
     public function postDetailPage(ShowPostDto $post, array $image_list, array $tag_list): self
     {
-        $ui_material_list = [
-            new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
-            new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
-            new UIMaterial(slot: "tags", replacement: self::createBadgeList(tag_list: $tag_list)),
-            new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url)),
-            new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
-            new UIMaterial(slot: "user-name", replacement: $post->user_name),
-        ];
 
-        $this->page = ComponentBuilder::defineComponent(content_path: 'page/post-detail.html', props: $ui_material_list);
+        $tag_name_list = [];
+        foreach ($tag_list as $tag) {
+            $tag_name_list[] = $tag->name;
+        }
+
+        $this->page = ComponentBuilder::defineComponent(
+            content_path: 'page/post-detail.html',
+            props: [
+                new UIMaterial(slot: "title", replacement: htmlspecialchars($post->title)),
+                new UIMaterial(slot: "body", replacement: htmlspecialchars($post->body)),
+                new UIMaterial(slot: "tags", replacement: BadgeList::render(tag_name_list: $tag_name_list)),
+                new UIMaterial(slot: "images", replacement: self::createImageList(image_list: $image_list, thumbnail_url: $post->thumbnail_url)),
+                new UIMaterial(slot: "user-avatar", replacement: $post->user_avatar),
+                new UIMaterial(slot: "user-name", replacement: $post->user_name),
+            ]
+        );
 
         return $this;
     }
@@ -126,11 +117,6 @@ class HTMLBuilder implements HTMLBuilderInterface
                     $error_ui_material_list[] = new UIMaterial(slot: "invalid_body", replacement: '<p class="mt-1 text-pink-600">' . $error->title . '</p>');
                 }
             }
-        } else {
-            $error_ui_material_list = [
-                new UIMaterial(slot: "invalid_title", replacement: ""),
-                new UIMaterial(slot: "invalid_body", replacement: "")
-            ];
         }
 
         $this->page = ComponentBuilder::defineComponent(content_path: 'page/post-edit.html', props: [...$ui_material_list, ...$error_ui_material_list]);
@@ -187,21 +173,6 @@ class HTMLBuilder implements HTMLBuilderInterface
         return $fragment;
     }
 
-
-    /**
-     * @param IndexTagDto[] $tag_list
-     * @return string
-     */
-    public static function createBadgeList(array $tag_list): string
-    {
-        $tag_name_list = [];
-        foreach ($tag_list as $tag) {
-           $tag_name_list[] = $tag->name;
-        }
-
-        return BadgeList::render(tag_name_list: $tag_name_list);
-    }
-
     /**
      * @param IndexImageDto[] $image_list
      * @param string $thumbnail_url
@@ -212,7 +183,7 @@ class HTMLBuilder implements HTMLBuilderInterface
 
         $image_list_fragment = "";
         foreach ($image_list as $image) {
-            $image_list_fragment = $image_list_fragment . Image::render(url:$image->url, isThumbnail: $thumbnail_url === $image->url);
+            $image_list_fragment = $image_list_fragment . Image::render(url: $image->url, isThumbnail: $thumbnail_url === $image->url);
         }
 
         return $image_list_fragment;

@@ -3,7 +3,6 @@
 namespace App\Handler;
 
 use App\Lib\Error\InputError;
-use App\Lib\HTMLBuilder;
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
@@ -14,7 +13,6 @@ use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\Image\StoredImageDto;
 use App\Model\Dto\Post\IndexPostDto;
 use App\Repository\ImageRepositoryInterface;
-use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -49,7 +47,7 @@ class CreatePostHandler implements HandlerInterface
         if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
-        if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
+        if (count($error_list) > 0) return static::redirectTopWithInputError($error_list);
 
         $img_error_list = ValidateImageFile::exec(req: $this->req);
         // TODO: create ui
@@ -119,16 +117,22 @@ class CreatePostHandler implements HandlerInterface
     }
 
     /**
-     * @param HTMLBuilder $compose
-     * @param PostRepository $post_repo
      * @param InputError[] $error_list
      * @return Response
      */
-    public static function createTopPageWithError(HTMLBuilder $compose, PostRepository $post_repo, array $error_list): Response
+    public static function redirectTopWithInputError(array $error_list): Response
     {
-        $post_list = $post_repo->getPostList();
+        $param = "";
+        foreach ($error_list as $index => $error) {
+            $kv = $error->field . "=" . $error->type;
+            if ($index === 0) {
+                $param = $param . "?" . $kv;
+            } else {
+                $param = $param . "&" . $kv;
+            }
+        }
 
-        $html = $compose->topPage($post_list, $error_list)->getHtml();
-        return new Response(status_code: OK_STATUS_CODE, html: $html);
+        $redirect_url = HOST_BASE_URL . "/" . $param;
+        return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
     }
 }

@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Lib\Validator;
 
 use App\Lib\Error\InputError;
+use App\Lib\Validator\Enum\InputErrorType;
 
 class ValidatePost
 {
@@ -13,17 +15,17 @@ class ValidatePost
      */
     public static function exec(string $title, string $body, string $main_image): array
     {
-        /** @var InputError[] $error_list */
+        /** @var InputErrorType[] $error_list */
         $error_list = [];
 
         if ($title === "") {
-            $error_list[] = new InputError("タイトルを入力してください。", "title");
+            $error_list[] = new InputError(type: InputErrorType::REQUIRED, field: "title");
         }
         if ($body === "") {
-            $error_list[] = new InputError("本文を入力してください。", "body");
+            $error_list[] = new InputError(type:InputErrorType::REQUIRED, field: "body");
         }
         if ($main_image === "") {
-            $error_list[] = new InputError("メイン画像を選択してください", "image");
+            $error_list[] = new InputError(type: InputErrorType::REQUIRED, field: "main_image");
         }
 
         return $error_list;
