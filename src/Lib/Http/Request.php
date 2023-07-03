@@ -17,15 +17,16 @@ class Request
     }
 
     /**
-     * @return QueryParam[]
+     * @return QueryParam[] | null
      */
-    public function parseQuery(): array
+    public function parseQuery(): array | null
     {
         $query = $this->path;
         $param_list = [];
 
         // ? 以降の文字列を取り出す
         $queryString = substr($query, strpos($query, "?") + 1);
+        if ($queryString === "") return null;
 
         $pairs = explode("&", $queryString);
         foreach ($pairs as $pair) {

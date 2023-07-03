@@ -24,11 +24,11 @@ class HTMLBuilder implements HTMLBuilderInterface
      * @param ShowPostDto[] $post_list
      * @param array<string, PostTagListDto> $post_tag_hash_map
      * @param string $csrf_token
-     * @param QueryParam[] $query
+     * @param QueryParam[] | null $query
      * @param array|null $error_list
      * @return $this
      */
-    public function topPage(array $post_list, array $post_tag_hash_map, array $query, string $csrf_token, array $error_list = null): self
+    public function topPage(array $post_list, array $post_tag_hash_map, array | null $query, string $csrf_token, array $error_list = null): self
     {
         $post_list_fragment = "";
         foreach ($post_list as $post) {
@@ -41,11 +41,13 @@ class HTMLBuilder implements HTMLBuilderInterface
             new UIMaterial(slot: "csrf", replacement: $csrf_token),
         ];
 
-        foreach ($query as $q) {
-            $error_ui_material = ErrorMessage::getErrorUIMaterial($q);
-            if (is_null($error_ui_material)) continue;
+        if (!is_null($query)) {
+            foreach ($query as $q) {
+                $error_ui_material = ErrorMessage::getErrorUIMaterial($q);
+                if (is_null($error_ui_material)) continue;
 
-            $ui_material_list[] = $error_ui_material;
+                $ui_material_list[] = $error_ui_material;
+            }
         }
 
         $this->page = ComponentBuilder::defineComponent(content_path: 'page/top.html', props: $ui_material_list);
