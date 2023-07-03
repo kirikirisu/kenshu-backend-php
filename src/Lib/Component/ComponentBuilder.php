@@ -31,6 +31,8 @@ class ComponentBuilder
             $fragment = str_replace($slot, $ui_material_list[$i]->replacement, $fragment);
         }
 
+        // HTMLBuilder側で不要なslotを削除する処理を書くのが冗長なため、
+        // fragment作成後に不要なslotを全て削除する処理を追加
         return self::cleanRestSlot($fragment);
     }
 
