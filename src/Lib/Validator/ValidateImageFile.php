@@ -10,31 +10,34 @@ class ValidateImageFile
 {
     /**
      * @param Request $req
+     * @param string $target
+     * @param bool $multi
      * @return ImageFileError[]
      */
-    public static function exec(Request $req): array
+    public static function exec(Request $req, string $target, bool $multi = false): array
     {
+        if (!isset($req->files[$target])) return [new ImageFileError(type: FileErrorType::NOT_SELECTED, message: "ファイルが選択されていません。")];
+
         $file_error_list = [];
+        $target_file = $req->files[$target];
 
-        if (!isset($req->files['images'])) return [new ImageFileError(type: FileErrorType::NOT_SELECTED, message: "ファイルが選択されていません。")];
+        if ($multi) {
+            foreach ($req->files['images']['error'] as $key => $error) {
+                if ($error == UPLOAD_ERR_OK) {
+                    $file_name = $req->files['images']['name'][$key];
+                    $file_size = $req->files['images']['size'][$key];
+                    $tmp_file_name = $req->files['images']['tmp_name'][$key];
 
-        foreach ($req->files['images']['error'] as $key => $error) {
-            if ($error == UPLOAD_ERR_OK) {
-                $file_name = $req->files['images']['name'][$key];
-                $file_size = $req->files['images']['size'][$key];
-                $tmp_file_name = $req->files['images']['tmp_name'][$key];
-
-                $file_error = self::validateFile(tmp_file_name: $tmp_file_name, file_name: $file_name, size: $file_size);
-                if (!is_null($file_error)) $file_error_list[] = $file_error;
+                    $file_error = self::validateFile(tmp_file_name: $tmp_file_name, file_name: $file_name, size: $file_size);
+                    if (!is_null($file_error)) $file_error_list[] = $file_error;
+                }
             }
+        } else {
+            $error = self::validateFile(tmp_file_name: $target_file['tmp_name'], file_name: $target_file['name'], size: $target_file['size']);
+            if (!is_null($error)) $file_error_list[] = $error;
         }
 
         return $file_error_list;
-    }
-
-    public static function validateSingleFile(mixed $file): ImageFileError|null
-    {
-        return self::validateFile(tmp_file_name: $file['tmp_name'], file_name: $file['name'], size: $file['size']);
     }
 
     public static function validateFile(string $tmp_file_name, string $file_name, string $size): ImageFileError|null

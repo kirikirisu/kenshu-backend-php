@@ -44,14 +44,15 @@ class CreatePostHandler implements HandlerInterface
         $image_list = $this->req->files['images'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
+
         if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::redirectTopWithInputError($error_list);
 
-        $img_error_list = ValidateImageFile::exec(req: $this->req);
+        $image_error_list = ValidateImageFile::exec(req: $this->req, target: "images", multi: true);
         // TODO: create ui
-        if (count($img_error_list) > 0) return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>file error</div>");
+        if (count($image_error_list) > 0) return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>file error</div>");
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 

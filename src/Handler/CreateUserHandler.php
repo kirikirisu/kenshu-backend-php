@@ -40,8 +40,9 @@ class CreateUserHandler implements HandlerInterface
             return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: $html);
         }
 
-        $file_error = ValidateImageFile::validateSingleFile($avatar);
-        if (!is_null($file_error) && $file_error->type !== FileErrorType::NOT_SELECTED) {
+        $file_error_list = ValidateImageFile::exec(req: $this->req, target: "avatar");
+        $file_error = $file_error_list[0];
+        if (count($file_error_list) > 0 && $file_error->type !== FileErrorType::NOT_SELECTED) {
             return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>{$file_error->message}</div>");
         }
 
