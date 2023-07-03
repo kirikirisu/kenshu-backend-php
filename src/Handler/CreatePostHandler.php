@@ -120,7 +120,7 @@ class CreatePostHandler implements HandlerInterface
      * @param InputError[] $error_list
      * @return Response
      */
-    public static function redirectTopWithInputError(array $error_list): Response
+    private function redirectTopWithInputError(array $error_list): Response
     {
         $param = "";
         foreach ($error_list as $index => $error) {
