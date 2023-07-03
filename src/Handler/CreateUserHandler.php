@@ -53,7 +53,6 @@ class CreateUserHandler implements HandlerInterface
 
         $hashed_password = password_hash($raw_password, PASSWORD_DEFAULT);
         $payload = new IndexUserDto(name: $name, email: $mail, password: $hashed_password, icon_url: $icon_url);
-//        return new Response(status_code: OK_STATUS_CODE, html: "$icon_url");
         $user_id = $this->user_repo->insertUser($payload);
 
         SessionManager::setValue(key: "user_id", value: $user_id);
