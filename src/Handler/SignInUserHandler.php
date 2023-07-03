@@ -21,7 +21,7 @@ class SignInUserHandler implements HandlerInterface
     public function run(): Response
     {
         SessionManager::beginSession();
-        if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+        if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $mail = $this->req->post['mail'];
         $raw_password = $this->req->post['password'];

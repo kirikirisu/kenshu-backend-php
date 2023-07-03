@@ -27,14 +27,14 @@ class UpdatePostHandler implements HandlerInterface
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey("user_id");
         if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
-        if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
+        if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: "g");
         // TODO
-        if (count($error_list) > 0) return new Response(status_code: OK_STATUS_CODE, html: "<div>更新に失敗しました。</div>");
+        if (count($error_list) > 0) return new Response(status_code: UNPROCESSABLE_ENTITY_STATUS_CODE, html: "<div>更新に失敗しました。</div>");
 
         $post = $this->post_repo->getPostById(id: $this->post_id);
         if ($post->user_id !== (int)$user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized}</div>");

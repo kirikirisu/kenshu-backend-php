@@ -51,7 +51,7 @@ class CreatePostHandler implements HandlerInterface
 
         $img_error_list = ValidateImageFile::exec(req: $this->req);
         // TODO: create ui
-        if (count($img_error_list) > 0) return new Response(status_code: OK_STATUS_CODE, html: "<div>file error</div>");
+        if (count($img_error_list) > 0) return new Response(status_code: UNPROCESSABLE_ENTITY_STATUS_CODE, html: "<div>file error</div>");
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 
