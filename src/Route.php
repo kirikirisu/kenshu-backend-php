@@ -13,8 +13,8 @@ use App\Handler\GetTopPageHandler;
 use App\Handler\HandlerInterface;
 use App\Handler\NotFoundHandler;
 use App\Handler\SignInUserHandler;
-use App\Handler\UpdatePostHandler;
 use App\Handler\SignOutUserHandler;
+use App\Handler\UpdatePostHandler;
 use App\Lib\Http\Request;
 use App\Lib\Singleton\PageCompose;
 use App\Lib\Singleton\PgConnect;
@@ -27,7 +27,7 @@ class Route
 {
     public static function getHandler(Request $req): HandlerInterface
     {
-        if ($req->method === "GET" && $req->path === "/") {
+        if ($req->method === "GET" && preg_match("/^\/(\?([a-zA-Z0-9_]+=[a-zA-Z0-9_]+&)*[a-zA-Z0-9_]+=[a-zA-Z0-9_]+)?$/", $req->path)) {
             return new GetTopPageHandler(req: $req, compose: PageCompose::getComposer(), user_repo: new UserRepository(), tag_repo: new TagRepository(), post_repo: new PostRepository());
 
         } else if ($req->method === "POST" && $req->path === "/") {

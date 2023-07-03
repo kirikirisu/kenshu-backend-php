@@ -55,6 +55,7 @@
 	<h1 class="text-4xl font-bold">Kenshu backend php</h1>
 </header>
 <main>
+	<div>%referer_error%</div>
 	<form action="/user/signout" method="post" enctype="multipart/form-data" class="mb-10">
 		<!-- TODO: Display only when user is logged in -->
 		<button
@@ -108,7 +109,7 @@
 		</div>
 		<input id="fileInput" multiple type="file" accept="image/*" value="ファイルを選択" name="images[]"
 				onchange="fileDrop(event, 'input')">
-		%invalid_image%
+		%invalid_main_image%
 		<div id="uploadImageArea"></div>
 		<div>
 			<label><input type="checkbox" name="categories[]" value="1">総合</label>

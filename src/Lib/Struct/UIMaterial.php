@@ -1,5 +1,5 @@
 <?php
-namespace App\Lib\Helper\HTMLBuilderHelper;
+namespace App\Lib\Struct;
 
 class UIMaterial
 {

@@ -3,19 +3,16 @@
 namespace App\Handler;
 
 use App\Lib\Error\InputError;
-use App\Lib\HTMLBuilder;
 use App\Lib\HTMLBuilderInterface;
 use App\Lib\Http\Request;
 use App\Lib\Http\Response;
 use App\Lib\Http\SessionManager;
 use App\Lib\Manager\CsrfManager;
-use App\Lib\Manager\SessionManagerInterface;
 use App\Lib\Validator\ValidateImageFile;
 use App\Lib\Validator\ValidatePost;
 use App\Model\Dto\Image\StoredImageDto;
 use App\Model\Dto\Post\IndexPostDto;
 use App\Repository\ImageRepositoryInterface;
-use App\Repository\PostRepository;
 use App\Repository\PostRepositoryInterface;
 use App\Repository\TagRepositoryInterface;
 use App\Repository\UserRepositoryInterface;
@@ -37,9 +34,10 @@ class CreatePostHandler implements HandlerInterface
 
     public function run(): Response
     {
+
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey("user_id");
-        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>ログインが必要です。</div>");
 
         $title = $this->req->post['post-title'];
         $body = $this->req->post['post-body'];
@@ -47,14 +45,15 @@ class CreatePostHandler implements HandlerInterface
         $image_list = $this->req->files['images'];
         $category_list = self::collectCategoryNumber($this->req->post['categories'] ?? []);
 
+
         if (!CsrfManager::validate(token: $this->req->post['csrf'])) return new Response(status_code: OK_STATUS_CODE, html: "<div>エラーが発生しました。</div>");
 
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
-        if (count($error_list) > 0) return static::createTopPageWithError(compose: $this->compose, post_repo: $this->post_repo, error_list: $error_list);
+        if (count($error_list) > 0) return static::redirectTopWithInputError($error_list);
 
-        $img_error = ValidateImageFile::exec(req: $this->req);
+        $image_error_list = ValidateImageFile::exec(file_list: $this->req->files['images']);
         // TODO: create ui
-        if (!is_null($img_error)) return new Response(status_code: OK_STATUS_CODE, html: "<div>{$img_error->message}</div>");
+        if (count($image_error_list) > 0) return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>file error</div>");
 
         $stored_img_binary = self::storeImageBinaryToDisk(image_list: $image_list, main_image: $main_image);
 
@@ -120,16 +119,22 @@ class CreatePostHandler implements HandlerInterface
     }
 
     /**
-     * @param HTMLBuilder $compose
-     * @param PostRepository $post_repo
      * @param InputError[] $error_list
      * @return Response
      */
-    public static function createTopPageWithError(HTMLBuilder $compose, PostRepository $post_repo, array $error_list): Response
+    private function redirectTopWithInputError(array $error_list): Response
     {
-        $post_list = $post_repo->getPostList();
+        $param = "";
+        foreach ($error_list as $index => $error) {
+            $kv = $error->field . "=" . $error->type;
+            if ($index === 0) {
+                $param = $param . "?" . $kv;
+            } else {
+                $param = $param . "&" . $kv;
+            }
+        }
 
-        $html = $compose->topPage($post_list, $error_list)->getHtml();
-        return new Response(status_code: OK_STATUS_CODE, html: $html);
+        $redirect_url = HOST_BASE_URL . "/" . $param;
+        return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
     }
 }

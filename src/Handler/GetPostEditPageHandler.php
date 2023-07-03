@@ -28,10 +28,11 @@ class GetPostEditPageHandler implements HandlerInterface
     {
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey('user_id');
-        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized.</div>");
+        if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized.iii</div>");
 
+        $redirect_url = HOST_BASE_URL . "/?refererStatus=unauthorized";
         $post = $this->post_repo->getPostById(id: $this->post_id);
-        if ($post->user_id !== (int)$user_id) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>Unauthorized</div>");
+        if ($post->user_id !== (int)$user_id) return new Response(status_code: SEE_OTHER_STATUS_CODE, redirect_url: $redirect_url);
 
         try {
             $this->pdo->beginTransaction();
