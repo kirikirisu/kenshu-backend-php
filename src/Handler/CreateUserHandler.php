@@ -37,12 +37,12 @@ class CreateUserHandler implements HandlerInterface
         $error_list = ValidateUser::exec(name: $name, mail: $mail, password: $raw_password);
         if (count($error_list) > 0) {
             $html = $this->compose->signUpPage(csrf_token: CsrfManager::generate(), error_list: $error_list)->getHtml();
-            return new Response(status_code: UNPROCESSABLE_ENTITY_STATUS_CODE, html: $html);
+            return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: $html);
         }
 
         $file_error = ValidateImageFile::validateSingleFile($avatar);
         if (!is_null($file_error) && $file_error->type !== FileErrorType::NOT_SELECTED) {
-            return new Response(status_code: UNPROCESSABLE_ENTITY_STATUS_CODE, html: "<div>{$file_error->message}</div>");
+            return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>{$file_error->message}</div>");
         }
 
         $icon_url = null;
