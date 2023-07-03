@@ -4,37 +4,24 @@ namespace App\Lib\Validator;
 
 use App\Lib\Error\FileErrorType;
 use App\Lib\Error\ImageFileError;
-use App\Lib\Http\Request;
 
 class ValidateImageFile
 {
-    /**
-     * @param Request $req
-     * @param string $target
-     * @param bool $multi
-     * @return ImageFileError[]
-     */
-    public static function exec(Request $req, string $target, bool $multi = false): array
+    public static function exec(mixed $file_list): array
     {
-        if (!isset($req->files[$target])) return [new ImageFileError(type: FileErrorType::NOT_SELECTED, message: "ファイルが選択されていません。")];
+        if (!isset($file_list)) return [new ImageFileError(type: FileErrorType::NOT_SELECTED, message: "ファイルが選択されていません。")];
 
         $file_error_list = [];
-        $target_file = $req->files[$target];
 
-        if ($multi) {
-            foreach ($req->files['images']['error'] as $key => $error) {
-                if ($error == UPLOAD_ERR_OK) {
-                    $file_name = $req->files['images']['name'][$key];
-                    $file_size = $req->files['images']['size'][$key];
-                    $tmp_file_name = $req->files['images']['tmp_name'][$key];
+        foreach ($file_list['error'] as $key => $error) {
+            if ($error == UPLOAD_ERR_OK) {
+                $file_name = $file_list['name'][$key];
+                $file_size = $file_list['size'][$key];
+                $tmp_file_name = $file_list['tmp_name'][$key];
 
-                    $file_error = self::validateFile(tmp_file_name: $tmp_file_name, file_name: $file_name, size: $file_size);
-                    if (!is_null($file_error)) $file_error_list[] = $file_error;
-                }
+                $file_error = self::validateFile(tmp_file_name: $tmp_file_name, file_name: $file_name, size: $file_size);
+                if (!is_null($file_error)) $file_error_list[] = $file_error;
             }
-        } else {
-            $error = self::validateFile(tmp_file_name: $target_file['tmp_name'], file_name: $target_file['name'], size: $target_file['size']);
-            if (!is_null($error)) $file_error_list[] = $error;
         }
 
         return $file_error_list;

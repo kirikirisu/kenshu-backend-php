@@ -34,6 +34,7 @@ class CreatePostHandler implements HandlerInterface
 
     public function run(): Response
     {
+
         SessionManager::beginSession();
         $user_id = SessionManager::findValueByKey("user_id");
         if (is_null($user_id)) return new Response(status_code: UNAUTHORIZED_STATUS_CODE, html: "<div>ログインが必要です。</div>");
@@ -50,7 +51,7 @@ class CreatePostHandler implements HandlerInterface
         $error_list = ValidatePost::exec(title: $title, body: $body, main_image: $main_image);
         if (count($error_list) > 0) return static::redirectTopWithInputError($error_list);
 
-        $image_error_list = ValidateImageFile::exec(req: $this->req, target: "images", multi: true);
+        $image_error_list = ValidateImageFile::exec(file_list: $this->req->files['images']);
         // TODO: create ui
         if (count($image_error_list) > 0) return new Response(status_code: BAD_REQUEST_STATUS_CODE, html: "<div>file error</div>");
 
